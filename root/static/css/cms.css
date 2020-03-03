@@ -1,0 +1,112 @@
+body{
+    text-align: center;
+    height: 100%;
+    width: 1280px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+#panl {
+    width: 100%;
+    height: 50px;
+}
+#imgs {
+    float: left;
+    width: 100%;
+}
+#foto{
+    float: left;
+    height: 310px;
+    width: 590px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    margin-left: 6px;
+}
+#post{
+    float: left;
+    width: 260px;
+    height: 368px;
+    margin-left: 25px;
+    margin-top: 22px;
+}
+.kadr{
+    margin: 2px;
+    width: 255px;
+    height: 150px;
+}
+#rows {
+    height: 307px;
+    overflow-y: scroll;
+    padding-right: 10px;
+}
+.image{
+    width: 180px;
+    margin: 4px;
+}
+.address{
+    background: url(/images/butt/search-glass.svg) no-repeat 12px center/16px;
+    padding: 7px 8px 7px 40px;
+    margin-left: 8px;
+    font-size: 1.3em;
+    float: left;
+}
+.search{
+    margin-left: 5px;
+    float: left;
+}
+#left_col{
+    width: 16%;
+    height: 2500px;
+    float: left;
+    border-right: 2px;
+    margin-bottom: -15px;
+    text-align: center;
+}
+#center_col {
+    width: 67%;
+    float: left;
+    padding: 0 6px 0 6px;
+    overflow-y: scroll;
+}
+table {
+    float:left;
+}
+select {
+    width: 325px;
+    height: 21px;
+}
+#right_col{
+    width: 16%;
+    float: left; 
+    border-left: 2px; 
+    margin-bottom:-15px;
+    text-align: center;
+}
+a.tip:hover {
+    cursor: help;
+    position: relative
+}
+a.tip span {
+    display: none
+}
+a.tip:hover span {
+    font-size: 18px;
+    border: #c0c0c0 1px dotted;
+    padding: 1px 20px 5px 5px;
+    display: block;
+    z-index: 100;
+    background: url(/images/butt/search-glass.svg) #f0f0f0 no-repeat 100% 5%;
+    left: 0px;
+    margin: 8px;
+    width: 200px;
+    position: absolute;
+    top: -90px;
+    text-decoration: none
+}
+#imdb {
+    font-size: 30px;
+    color: #ff2500;
+    font-style: italic;
+}
+#chek {
+    zoom: 2;
+}
