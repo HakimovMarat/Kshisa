@@ -3,25 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>kshisa</title>
-    <link rel="stylesheet" href="[% c.uri_for('/static/css/main.css') %]" />
-    <link rel="stylesheet" href="[% c.uri_for('/static/css/star-rating-svg.css') %]" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link rel="stylesheet" href="/static/css/cms.css" />
+    <link rel="stylesheet" href="/static/css/star-rating-svg.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js">
+    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<main>
-<form method="post" id="[% ident %]" action="/">
-    [% user %]
-    [% micro %]
-    [% l %]    
-    [% form %]
-    [% full %]
-    [% text %]
-    [% r %]
-    [% forma %]
+<form method="post" id="pass" action="/">
+    [% text  %]
+    [% root  %]
 </form>
-</main>
 <script>
     $(function() {
     $(".my-rating-2").starRating({
@@ -48,7 +40,8 @@
         }
     }
     $(document).ready(function() {
-    var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]; 
+    var monthNames = 
+    [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]; 
     var dayNames= ["Sun","Mon","Tue","Wen","Thu","Fri","Sut"]
     
     var h = $("#hours").text();
@@ -60,32 +53,30 @@
     var newDate = new Date();
     newDate.setDate(newDate.getDate());
     $('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + 
-    ' ' + monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
+    ' ' + monthNames[newDate.getMonth()]);
 
     setInterval( function() {
         var seconds = new Date().getSeconds();
-        $(".sec").html(( seconds < 10 ? "0" : "" ) + seconds);
+        $("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
     },1000);
     
     setInterval( function() {
         var minutes = new Date().getMinutes();
-        $(".min").html(( minutes < 10 ? "0" : "" ) + minutes);
+        $("#min").html(( minutes < 10 ? "0" : "" ) + minutes + "::");
         minutes = minutes + m;
         if (minutes > 59) {
             minutes = minutes-60;
             h1 = 1;
         }
-        $(".min1").html(( minutes < 10 ? "0" : "" ) + minutes);
     },1000);
     
     setInterval( function() {
         var hours = new Date().getHours();
-        $(".hours").html(( hours < 10 ? "0" : "" ) + hours);
+        $("#hours").html(( hours < 10 ? "0" : "" ) + hours + "::");
         hours = hours + h + h1;
         if (hours > 23) {
             hours = hours - 24;
         }
-        $(".hours1").html(( hours < 10 ? "0" : "" ) + hours);
     }, 1000);   
     });
 </script>

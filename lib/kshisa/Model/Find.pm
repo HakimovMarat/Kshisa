@@ -4,6 +4,7 @@ use namespace::autoclean;
 use YAML::Any qw(LoadFile DumpFile);
 use LWP;
 use LWP::Simple qw(getstore);
+use Image::Magick;
 
 extends 'Catalyst::Model';
 =head1 NAME
@@ -12,184 +13,153 @@ kshisa::Model::Find - Catalyst Model
 Catalyst Model.
 =cut
 
-sub mail {
-    my ($self, $base, $find, $findfolder, $findpics, $parimdb, $basenumb) = @_;
-    my ($forml, $formr, $leftp, @d, @s, @t, $response, @names, %crewre, @title, 
-        $pics, $resimdb, $resimdb0, @code, @name, @year, $eng, $text, $reit, $imdb);
-    my $shem  = LoadFile($base.'shem');
-    my $snip  = LoadFile($base.'snip');
-    my $shemsize = $#{$shem->[0]};
-    push @d, $shem->[0][$_]  for 0..$shemsize;
-    push @s, $snip->[0][0][$_] for 0..7;
-    push @t, $snip->[0][2][$_] for 0..9;
-    unlink glob "$findfolder*.*";
-    unlink glob "$findpics*.*";
-
-    my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
-    if ($find =~ /^(\d+_.*?)/) {
-	    $response = LWP::UserAgent->new->get($d[0][6][1].$find, 'User-Agent' => $UA);
-        #getstore($d[0][6][3].$find, $findfolder.$find.'.jpg')
-	}
-    else {
-        $response = LWP::UserAgent->new->get($d[0][6][0].$find, 'User-Agent' => $UA);
-        for ($response->decoded_content) {
-            while ( $_ =~ m{$d[0][6][2]}mg) {
-                getstore($d[0][6][3].$1, $findfolder.$2.'.jpg') if $1;
-				push @names, $2;
-            }
-        }
-		$response = LWP::UserAgent->new->get($d[0][6][1].$names[0], 'User-Agent' => $UA);
-    }
-    my $x = 0;
-    for (@names) {
-	    $leftp = $leftp.'<div class="numb">'.($x = $x + 1).
-				        '</div><a title="'.$_.'">
-						 <input type="image" class="image"
-							   name="'.$_.'"
-							   src="/images/find2/'.$_.'.jpg"></a>' if $_;
- 	}
-    
-    my $imgs = 0;
-    for my $i (0..$shemsize) {
-        my $x = 0;
-        my $name = $d[$i][0];
-        my $rest = $d[$i][2];
-        for ($response->decoded_content) {
-            while ( $_ =~ m{$d[$i][4]}mg) {
-                my $pers = $1;
-                while ( $pers =~ m{$d[$i][5]}mg) {
-                    my $str = $1;
-                    if ($i == 0) {
-                        ++$imgs;
-                        if ($imgs%2 == 0) {
-                            getstore($str, $findpics.($x = $x + 1).'.jpg');
-                        }
-                    }
-                    else {
-                        if ($d[$i][1] == 3) {
-                            $text = $str;
-                        }    
-                        else {
-                            if ($d[$i][3] == 2 or $d[$i][3] == 3) {
-                                if ($name eq 'name') {
-                                    push @title, $str;
-                                    if ($title[1]) {
-                                        $resimdb = LWP::UserAgent->new->get($d[0][6][6].$title[1].'&ref_=nv_sr_sm', 'User-Agent' => $UA);
-                                        	for ($resimdb->decoded_content) {
-                                                while ( $_ =~ m{$d[0][6][7]}mg ) {
-			                                        push @code, $1;
-			                                        push @name, $2;
-			                                        push @year, $3;
-                                                }
-                                           }
-                                        if ($parimdb) {
-                                            $imdb = $parimdb
-                                        }
-                                        else {
-                                            $imdb = $code[0]
-                                        }
-                                        $resimdb0 = LWP::UserAgent->new->get($d[0][6][10].$imdb.$d[0][6][11], 'User-Agent' => $UA);
-                                        for ($resimdb0->decoded_content) {
-                                            while ( $_ =~ m{$d[0][6][12]}mg) {
-                                                $reit = $1;
-                                            }
-                                        }
-                                        $resimdb = LWP::UserAgent->new->get($d[0][6][8].$imdb.'/fullcredits', 'User-Agent' => $UA);
-                                    }
-                                }
-                                if ($i == 2) {$str = $reit}
-                                $forml = $forml.$s[0].$s[1].$s[2].$name.
-				                                $s[3].$name.($x=++$x).'l'.$s[4].
-					                            $str.$s[5].$s[6];
-			    	            $formr = $formr.$s[0].$s[1].$s[2].$name.
-				                                $s[3].$name.($x).'r'.$s[4].
-					                            $s[5].$s[6];
-                            }
-		                    if ($d[$i][3] == 1) {
-		     		            $forml = $forml.$s[0].$s[1].$s[2].$name.
-				                                $s[3].$name.($x=++$x).'l1'.$s[4].
-					                            $2.$s[5].$s[6];
-			    	            $formr = $formr.$s[0].$s[1].$s[2].$name.
-				                                $s[3].$name.($x).'r'.$s[4].
-					                            $str.$s[5].$s[6];
-			                    my $resmail = LWP::UserAgent->new->get($d[0][6][4].$1, 'User-Agent' => $UA);
-			                    sleep 1;
-			                    for ($resmail->decoded_content) {
-                                    while ($_ =~ m{$d[0][6][5]}mg) {
-					                    $eng = $1;
-                                        $forml = $forml.$s[0].$s[1].$s[2].$name.
-		 		                                        $s[3].$name.($x).'l2'.$s[4].
-					                                    $1.$s[5].$s[6];
-		                                $formr = $formr.$s[0].$s[1].$s[2].$name.
-				                                        $s[3].$name.($x).'r'.$s[4].
-					                                    $s[5].$s[6];
-                                    }
-                                    
-                                }
-                                my $field;
-                                my $flag = 0;
-                                for ($resimdb->decoded_content) {
-                                    while ( $_ =~ m{$d[0][6][9]}mg) {
-                                        if ($2 eq $eng and $flag == 0) {
-                                            $field = $1;
-                                            $flag++
-                                        }
-                                    }        
-                                }            
-                                $forml = $forml.$s[0].$s[1].$s[2].$name.
-		 		                                $s[3].$name.($x).'l3'.$s[4].
-					                            $field.$s[5].$s[6];
-	                            $formr = $formr.$s[0].$s[1].$s[2].$name.
-				                                $s[3].$name.($x).'r'.$s[4].
-					                            $s[5].$s[6]; 
-                                --$rest;
-                            }
-                        }
-                    }
+sub _mine {
+    my ($resp, $reg1, $reg2) = @_;
+    my (@text, @rus, @str, @pers);
+    for ($resp->decoded_content) {
+        while ( $_ =~ m{$reg1}mg) {
+            push @str, $1;
+            push @pers, $2 if $2;
+            if ($reg2) {
+                while ( $str[0] =~ m{$reg2}mg) {
+                    push @text, $1;
+                    push @rus, $2 if $2;
                 }
             }
         }
-        if ($d[$i][3] == 1) {
-            for my $x (($d[$i][2]-$rest+1)..$d[$i][2]) {
-                for my $y (1..3) {
-                    $forml = $forml.$s[0].$s[1].$s[2].$name.$s[3].$name.($x).'l'.$y.$s[4].$s[5].$s[6];
-	                $formr = $formr.$s[0].$s[1].$s[2].$name.$s[3].$name.($x).'r'.$y.$s[4].$s[5].$s[6];
-                }
-            }            
-        }
-    } 
-    my $name = $d[13][0];
-    $forml = $forml.$t[0].$t[1].$t[2].$t[3].$name.$t[4].$t[8].$t[9].$t[0].$t[1].$t[5].$name.'1l'.$t[6].
-                    $text.$t[7].$t[8].$t[9];    
-	$formr = $formr.$t[0].$t[1].$t[2].$t[3].$name.$t[4].$t[8].$t[9].$t[0].$t[1].$t[5].$name.'1r'.$t[6].
-					      $t[7].$t[8].$t[9]; 
-    $forml = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'3l'.$s[4].(($imgs-3)/2).$s[5].$s[6].$forml;
-    $formr = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'3r'.$s[4].$s[5].$s[6].$formr;
-    $forml = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'2l'.$s[4].$imdb.$s[5].$s[6].$forml;
-    $formr = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'2r'.$s[4].$s[5].$s[6].$formr;
-    $forml = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'1l'.$s[4].($names[0] || $find).$s[5].$s[6].$forml;
-    $formr = $s[0].$s[1].$s[2].$d[0][0].$s[3].$d[0][0].'1r'.$s[4].$s[5].$s[6].$formr;
-
-	opendir (my $dh, $findpics);
-	my @files = grep { !/^\./ } readdir($dh);
-	$_ =~ s/.jpg// for (@files);   
-    my $rows;
-    for (2..$#files+1) {
-        $rows = $rows.'<img class="image"name="'.$_.'"src="/images/find1/'.$_.'.jpg"/>
-                           <input type="checkbox" name="k'.$_.'" checked/>
-                           <input type="checkbox" id="chek" name="m'.$_.'"/>';            
-    }
-    $rows = $rows.'<input type="image" name="addone" src="/images/butt/chek.png">
-                   <input type="text"  name="file"   class="address" value="'.$basenumb.'" size="1"><hr>';
-    $pics = '<div id="imdb">'.$name[1].''.$year[1].'
-             <input id="chek" type="checkbox" name = 1" checked/></div>';
-
-    return $forml, $leftp, $formr, $rows, $pics
+    }    
+    return $reg2 ? (\@text, \@rus): (\@str, \@pers);
 }
 
+sub find {
+    my ($self, $base, $mail, $imdb) = @_;
+    my (@d, %glob, $pics, $text, $rus, $form);
+    $glob{'0_1_0'} = $mail;
+    $glob{'0_2_0'} = $imdb;
+    my $snip  = LoadFile($base.0);
+    my $size = $#{$snip->[2]};
+    push @d, $snip->[2][$_]    for 0..$size;
+
+    my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
+    my $resmail = LWP::UserAgent->new->get($d[0][5][1].$mail, 'User-Agent' => $UA); 
+    my $resimdb = LWP::UserAgent->new->get($d[0][4][0].$imdb, 'User-Agent' => $UA);        
+    my $respers = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][7], 'User-Agent' => $UA);
+    my $resfoto = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][1], 'User-Agent' => $UA);
+    my ($adr, $pers) = _mine($respers, $d[0][4][8]);
+    my ($fst, $kadr) = _mine($resfoto, $d[0][4][3]);
+    for my $x (1..$size) {
+        my ($a, $b);
+        if ( ($d[$x][2] =~ /^(\d+)_(\d+)$/)) {
+            ($a, $b) = ($1, $2);
+        }
+        if ($d[$x][3] == 1) {
+            ($text) = _mine($resimdb, $d[$x][4]);
+            $glob{$x.'_0_0'} = $text->[0];
+        }
+        elsif ($d[$x][3] == 2) {
+            for my $y (0..$a) {
+                ($text) = _mine( $resmail, $d[$x][4], $d[$x][5]);
+                $glob{$x.'_'.$y.'_0'} = $text->[$y] if $text->[$y];
+            }
+        }
+        elsif ($d[$x][3] == 3) {
+            for my $y (0..$a) {
+                ($text, $rus) = _mine( $resmail, $d[$x][4], $d[$x][5]);
+                $glob{$x.'_'.$y.'_0'} = $text->[$y] if $text->[$y];
+                $glob{$x.'_'.$y.'_1'} = $rus->[$y]  if $rus->[$y];
+                if ($d[$x][3] == 3 and $rus->[$y]) {
+                    my $resp = LWP::UserAgent->new->get($d[0][5][3].$text->[$y], 'User-Agent' => $UA);
+                    my ($eng)  = _mine($resp, $d[0][5][4]);
+                    $glob{$x.'_'.$y.'_2'} = $eng->[0] if $eng->[0];
+                    my $z = 0;
+                    for (@$pers) {
+                        if ($eng->[0] eq $_) {
+                            $glob{$x.'_'.$y.'_3'} = $adr->[$z];
+                            last
+                        }
+                        else {
+                            $glob{$x.'_'.$y.'_3'} = '';
+                        }
+                        $z++;
+                    }
+                }                              
+            }                
+        }
+        elsif ($d[$x][3] == 4) {
+            ($text, $rus) = _mine( $resmail, $d[$x][4], $d[$x][5]);
+            $glob{$x.'_0_0'} = $text->[0];
+            ($text) = _mine($resimdb, $d[0][5][7]);
+            $glob{$x.'_1_0'} = $text->[0]; 
+        }
+    }
+    my $path = $snip->[4][0].$snip->[4][4];
+    my $temp = $snip->[4][0].$snip->[4][7];
+    unlink glob "$path*.*";
+    unlink glob "$temp*.*";
+    ($text) = _mine($resimdb, $d[0][4][9]);
+    getstore($text->[0], $path.'0.jpg');
+    my $x = 0;
+    for (@$kadr) {
+        my $reskadr = LWP::UserAgent->new->get($d[0][4][0].
+                                        $imdb.$d[0][4][4].$_.$d[0][4][5], 'User-Agent' => $UA);
+        ($text) = _mine($reskadr, $d[0][4][6]);
+        if ($text->[0]) {
+            getstore($text->[0], $path.($x += 1).'.jpg');
+        }
+    }
+    $glob{'0_3_0'} = $x;
+    for (1..$x) {
+        my $image = Image::Magick->new;
+        $image->Read($path.$_.'.jpg');
+        $image->Set(Gravity => 'Center');
+        $image->Resize(geometry => '350x240');
+        $image->Write($temp.$_.'.jpg');
+    }
+    return \%glob
+}
+
+sub base {
+    my ($self, $dba, $find, $base) = @_;
+    my (@d);
+    my $snip  = LoadFile($base.0);
+    my $size = $#{$snip->[2]};
+    push @d, $snip->[2][$_]    for 0..$size;    
+    my (@find, @mail, @imdb);
+	for my $x (1..$#{$dba}) {
+	    if (uc $dba->[$x][1][0] =~ m{.*?$find.*?}img or 
+            uc $dba->[$x][1][1] =~ m{.*?$find.*?}img) {
+            push @find, $x;
+	    }
+	}
+    my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
+    my $resmail = LWP::UserAgent->new->get($d[0][5][0].$find, 'User-Agent' => $UA);
+    my $path = $snip->[4][0].$snip->[4][4];
+    unlink glob "$path*.*";
+    my ($fst, $kadr) = _mine($resmail, $d[0][5][2]);
+    my $x = 0;
+    for (@$fst) {
+        if ($_ =~ /.*?nopicture.*?/) {
+            getstore($d[0][5][8].$_, $path.$kadr->[$x].'.jpg');
+        }
+        else {
+            getstore($_, $path.$kadr->[$x].'.jpg');
+        }
+        push @mail, $kadr->[$x];
+        ++$x;
+    }
+    my $resimdb = LWP::UserAgent->new->get($d[0][4][10].$find, 'User-Agent' => $UA);
+    my ($text) = _mine($resimdb, $d[0][4][11]);
+    for (@$text) {
+        $resimdb = LWP::UserAgent->new->get($d[0][4][0].$_, 'User-Agent' => $UA);
+        ($text) = _mine($resimdb, $d[0][4][9]);
+        getstore($text->[0], $path.$_.'.jpg');
+        push @imdb, $_;
+    }
+    return \@find, \@mail, \@imdb
+}
 =encoding utf8
 =head1 AUTHOR
-Marat Haa Kim
+Marat Haakimoff
 =head1 LICENSE
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

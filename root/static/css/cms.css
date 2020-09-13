@@ -5,74 +5,190 @@ body{
     margin-left: auto;
     margin-right: auto;
 }
+#user{
+    background: url(/images/butt/back2.png) no-repeat;
+    background-position: 66%;
+    padding-top: 10px;
+    height: 700px;
+    text-align: center;
+}
+#mess{
+    font-size: 22px;
+    position: relative;
+    top: 20px;
+}
+#dash{ 
+    background: url(/images/butt/TV.png) no-repeat;
+    position: relative; 
+    top: 290px;
+    left: 14px;
+    width: 530px;
+    height: 350px;
+}
 #panl {
-    width: 100%;
-    height: 50px;
+    width:  100%;
+    height: 60px;
+}
+#addr{
+    float:  left;
+    width:  90px;
+    height: 41px;
+}
+#total{
+    font-size: 20px;
+    line-height: 25px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    vertical-align: middle;
+    margin: 2px;
+    color: #000;
+    border: 1px solid #d6e900;
+    background: #2db9f4;
+}
+.numb{
+    font-size: 20px;
+    line-height: 25px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    vertical-align: middle;
+    margin: 2px;
+    color: #000;
+    border: 1px solid #d6e900;
+    background:#2de2f4;
+}
+#address {
+    padding: 1px 1px 1px 10px;
+    font-size: 1.9em;
+    float: left;
+}
+#search {
+    margin-right: 5px;
+    float: left;
+    left: -41px;
+    bottom: 1px;
+    position: relative;
+}
+#logo {
+    float: left;
+    width: 125px;
+}
+#Clock { 
+    width: 100px;
+    height: 70px;
+    float: left;
+}
+#Date { 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-size: 16px;
+    margin-bottom: 11px;
+    text-shadow: 0 0 5px gray; 
+    float: left;
+}
+#hours { 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-size: 18px;
+    margin-bottom: 11px;
+    text-shadow: 0 0 5px gray; 
+    float: left;
+}
+#min { 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-size: 18px;
+    margin-bottom: 11px;
+    text-shadow: 0 0 5px gray; 
+    float: left;
+}
+#sec { 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-size: 18px;
+    margin-bottom: 11px;
+    text-shadow: 0 0 5px gray; 
+    float: left;
+}
+#Logo {
+    float: left;
+    margin-right: 17px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #819abb;
+}
+#weather {
+    float: left;
+    margin: 8px 10px 10px 10px;
+    position: relative;
+    top: -10px;
+}
+#data {
+    float: left;
+    margin-right: 10px;
+    width: 28%;
+}
+#pics {
+    float: left;
+    width: 57%;
+    height: 3028px;
 }
 #imgs {
     float: left;
+    width: 743px;
+    height: 345px;
+    background: url(/images/butt/TV.png) no-repeat;
+    background-size: 74% 103%;
+}
+.bill {
+    float: left;
+    margin-top: 13px;
+    width: 20%;
+    height: 40%;
+}
+#imgsk {
+    float: left;
+    height: 50%;
     width: 100%;
+    overflow-y: scroll;
+}
+#imgsf {
+    float: left;
 }
 #foto{
     float: left;
-    height: 310px;
-    width: 590px;
-    margin-top: 22px;
+    width: 352px;
+    margin-top: 16px;
     margin-bottom: 10px;
-    margin-left: 6px;
+    margin-right: 18px;
 }
-#post{
+.post{
     float: left;
-    width: 260px;
-    height: 368px;
-    margin-left: 25px;
-    margin-top: 22px;
+    width: 161px;
+    margin-left: 18px;
+    margin-top: 18px;
 }
 .kadr{
     margin: 2px;
-    width: 255px;
-    height: 150px;
+    width: 48%;
 }
-#rows {
-    height: 307px;
-    overflow-y: scroll;
-    padding-right: 10px;
+.kads{
+    float: left;
 }
 .image{
-    width: 180px;
+    width: 115px;
     margin: 4px;
 }
-.address{
-    background: url(/images/butt/search-glass.svg) no-repeat 12px center/16px;
-    padding: 7px 8px 7px 40px;
+#rcol{
+    float: left;
     margin-left: 8px;
-    font-size: 1.3em;
-    float: left;
-}
-.search{
-    margin-left: 5px;
-    float: left;
-}
-#left_col{
-    width: 16%;
-    height: 2500px;
-    float: left;
-    border-right: 2px;
-    margin-bottom: -15px;
     text-align: center;
-}
-#center_col {
-    width: 67%;
-    float: left;
-    padding: 0 6px 0 6px;
-    overflow-y: scroll;
 }
 table {
     float:left;
 }
+hr {
+    margin-bottom: 10px;
+}
 select {
-    width: 325px;
+    width: 286px;
     height: 21px;
+    font-size: 16px;
 }
 #right_col{
     width: 16%;
@@ -82,24 +198,22 @@ select {
     text-align: center;
 }
 a.tip:hover {
-    cursor: help;
     position: relative
 }
 a.tip span {
     display: none
 }
 a.tip:hover span {
-    font-size: 18px;
+    font-size: 20px;
     border: #c0c0c0 1px dotted;
     padding: 1px 20px 5px 5px;
     display: block;
     z-index: 100;
-    background: url(/images/butt/search-glass.svg) #f0f0f0 no-repeat 100% 5%;
-    left: 0px;
+    background: #f0f0f0;
+    left: -250px;
     margin: 8px;
     width: 200px;
     position: absolute;
-    top: -90px;
     text-decoration: none
 }
 #imdb {
@@ -107,6 +221,36 @@ a.tip:hover span {
     color: #ff2500;
     font-style: italic;
 }
-#chek {
+.chek {
     zoom: 2;
+    position: relative;
+    left: -60px;
+    top: 18px;
+}
+.chekit {
+    zoom: 2;
+    position: relative;
+    left: -60px;
+    top: -3px;
+}
+.dims {
+    width: 350px;
+    float: left;
+    margin-left: 4px;
+    height: 280px;
+}
+.del{
+    float: left;
+    margin: 14px;
+}
+#inst{
+    float: left;
+    margin-left: 215px;
+    margin-right: 12px;
+}
+.flag{
+    width: 100px;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 5px;
 }

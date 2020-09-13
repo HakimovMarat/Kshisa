@@ -20,173 +20,118 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    my $param = $c->req->body_params;
-    my $Base =  $c->config->{'Base'};
-    my $User =  $c->config->{'User'};
-    my $dsl = LoadFile($Base.'0');
-    my ( $text, $form, $full, $ba, $lo, $ava, $name, $user, $lb, $l, $r, $rb, $micro, $rew,
-         $avat, $file, $side, $right, $maxr, $rcent, $left, $maxl, $cout, $ds, $path, $usreit,
-         $usrew, $love, $message, $n, $film, $best, $info);
-    my $pl = 0;
-    my $flag = 0;
-    my $id = $param->{id} || 1;
-    my $ident = 'main';
-
-    $text = $c->model('Html')->start($User);                            # LOG IN
-    $ident = 'start';
-
-    if ($param->{New}) {                                                # NEW OR NOT USER
-        ($text)         = ($c->model('Html')->yes_new($User))         if $param->{New} eq 'Yes';
-        ($text, $ident) = ($c->model('Html')->not_new($User), 'pass') if $param->{New} eq 'No', ;
-    }
-    if ($param->{'P6'}) {                                               # PASSWORD VERIFICATION
-        my $pass;
-        for (1..6) { $pass = $pass.$param->{'P'.$_} if $param->{'P'.$_}}
-        my $dba = LoadFile($User.0);
-        if ( $pass eq 'H' ) {
-            $c->response->redirect($c->uri_for("/cms"));
-        }
-        for (1..$dba->[0]) {
-            if ( $dba->[$_][1] eq $pass ) {
-                $id = $dba->[$_][0];                                     # WRONG PASSWORD?
-                $flag = 1;
-                last;
+    my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2);
+    my $param = $c->req->body_params;    
+    my $kadr = 6;                       #PATH TO IMAGES
+    my $bnumb = $param->{files} || 8;    
+    my $numb  = $param->{idr} || 1; 
+    my $base  = $c->config->{'path'}.'Base/';
+    my $dba   = LoadFile($base.$bnumb);
+    my $total = $#{$dba};    
+    if ( $c->user_exists() ) {
+        if ($param->{'logout.x'}){  #LOGOUT
+            $c->logout;
+            $c->response->redirect($c->uri_for("/"))
+        }        
+        elsif ($param->{'sch.x'}) {                                                   #SEARCH IN NET
+            if ($param->{Address} =~ /^(\d+_.*?)(tt\d+)/) {
+                $glob = $c->model('Find')->find($base, $1, $2);
+            }
+            elsif ($param->{Address} =~ /^(\d+)$/) {
+                if ($1 <= $total){$numb = $1}
+                else {$numb = $total};
+                $glob = $c->model('Data')->readds($numb, $dba);
             }
             else {
-                $flag = 2;
+                if ($param->{Address}) {
+                    ($find, $mail, $imdb) = $c->model('Find')->base($dba, $param->{Address}, $base);
+                    $numb = $find->[0] || $numb;
+                    $glob = $c->model('Data')->readds($numb, $dba);                    
+                }
             }
-        }
-    }
-    if ($flag == 2) {
-        ($text, $ident) = ($c->model('Html')->wrong($User), 'pass');     # WRONG PASSWORD
-    }
-    if ($flag == 1) {
-        ($user, $file, $side, $right, $maxr, $rcent, $ava, $lo, $ba, $left, $maxl, $cout, $info, $ds, $love, $n, $avat) = 
-            $c->model('Html')->load($param, $User, $id, $Base);
-        ($l, $full, $r) = 
-            $c->model('Html')->info($cout, $side, $left, $right, $ds, $dsl, $info, $rew, $path, $usreit, $usrew, $lo, $ba, $n, $best, $avat, $ava, $message);
-    }
-    foreach my $avat (keys %$param) {                                   # CREATING NEW USER
-        if ($avat =~ /ava\d+.x/) {
-            $avat =~ s/\.x//;
-            if ($param->{name} && $param->{mail}) {
-                my $pass = $c->model('Yaml')->user($User, $param->{name}, $avat, $param->{mail});
-                ($text, $ident) = ($c->model('Html')->enter($pass), 'pass')
-            }
-            else {
-                $text = $c->model('Html')->forgot($c->config->{'User'});
-            }
-       }
-    }
-
-    $info = $dsl->[0][0];
-
-    if ( $param->{'Next_l.x'} or $param->{'Last_l.x'}) {                # STEP LEFT POSTERS
-        $left = $c->model('Yaml')->step($param, $left, $maxl)
-    }
-    elsif ( $param->{'Next_r.x'} or $param->{'Last_r.x'}) {             # STEP RIGHT POSTERS
-        $right = $c->model('Yaml')->step($param, $right, $maxr);
-    }
-
-    elsif ($param->{'kadr1.x'}) { ($cout, $side, $info) = ($left+1,   0, $dsl->{1}{1}{$left+1}) }   # CENTRAL VIEW
-    elsif ($param->{'kadr2.x'}) { ($cout, $side, $info) = ($left+2,   0, $dsl->{1}{1}{$left+2}) }
-    elsif ($param->{'kadr3.x'}) { ($cout, $side, $info) = ($left+3,   0, $dsl->{1}{1}{$left+3}) }
-    elsif ($param->{'kadr4.x'}) { ($cout, $side, $info) = ($left+4,   0, $dsl->{1}{1}{$left+4}) }
-    if ($love == 0) {
-        if ($param->{'kadr5.x'}) { ($cout, $side, $info) = ($right+1,  1, $ds->{1}{2}{$right+1}) }
-        if ($param->{'kadr6.x'}) { ($cout, $side, $info) = ($right+2,  1, $ds->{1}{2}{$right+2}) }
-        if ($param->{'kadr7.x'}) { ($cout, $side, $info) = ($right+3,  1, $ds->{1}{2}{$right+3}) }
-        if ($param->{'kadr8.x'}) { ($cout, $side, $info) = ($right+4,  1, $ds->{1}{2}{$right+4}) }
-    }
-    if ($love == 1) {
-        if ($param->{'kadr5.x'}) { ($cout, $side, $info) = ($right+1,  1, $ds->{1}{4}{$right+1}) }
-        if ($param->{'kadr6.x'}) { ($cout, $side, $info) = ($right+2,  1, $ds->{1}{4}{$right+2}) }
-        if ($param->{'kadr7.x'}) { ($cout, $side, $info) = ($right+3,  1, $ds->{1}{4}{$right+3}) }
-        if ($param->{'kadr8.x'}) { ($cout, $side, $info) = ($right+4,  1, $ds->{1}{4}{$right+4}) }
-    }
-    if ( $side == 0 ) {
-        if  ( $file == 0 ) {
-            if ($param->{'g.x'}) {                                      # MASHINE CHOICE FOR VIEWING
-                ($cout, $right) = $c->model('Yaml')->mashine($ds, $cout, $dsl, $User, 'g');
-                ($file, $side, $info, $love) = (0, 1, $ds->{1}{2}{$cout}, 0);
-            }
-            if ($param->{'h.x'}) {                                      # MASHINE CHOICE OF FAVORITE
-                ($cout, $right) = $c->model('Yaml')->mashine($ds, $cout, $dsl, $User, 'h');
-                ($file, $side, $info, $love) = (0, 1, $ds->{1}{4}{$cout}, 1);
-            }
-        }
-        if  ( $file == 1 ) {
-            if ($param->{'g.x'}) {                                      # CHOICE FOR VIEWING
-                ($cout, $right) = $c->model('Yaml')->mashine($ds, $cout, $dsl, $User, 'g');
-                ($side, $info, $love) = (1, $ds->{1}{2}{$cout}, 0);
-                $micro = `transmission-remote 192.168.1.5:9091 -a magnet:?xt=urn:btih:$info->{'magnet'}`;
-
-            }
-            if ($param->{'h.x'}) {                                      # CHOICE OF FAVORITE
-                ($cout, $right) = $c->model('Yaml')->mashine($ds, $cout, $dsl, $User, 'h');
-                ($side, $info, $love) = (1, $ds->{1}{4}{$cout}, 1);
-            }
-        }
-    }
-    if ( $side == 1 ) {
-        if ($param->{'phon.x'} && $param->{rew}) {                      # SAVE USER REWIEW
-            ($usreit, $usrew) = $c->model('Yaml')->rew($ds, $cout, $param, $love);
-        }
-        if ($param->{'phon.x'}) {
-            $rew = $c->model('HTML')->rew($ds, $cout);                  # USER REWIEW PANEL
-        }
-        if ($param->{'del.x'} && $love == 0) {                          # DELETE FOR VIEWING
-            ($cout, $side, $info, $left) = $c->model('Yaml')->del($ds, $dsl, $cout, $maxr, 2);
-        }
-        if ($param->{'del.x'} && $love == 1) {                          # DELETE OF FAVORITE
-            ($cout, $side, $info, $left) = $c->model('Yaml')->del($ds, $dsl, $cout, $maxr, 4);
-        }
-    }
-    if ($param->{Address}) {                                            # FIND IN BASE BY NAME
-        if ($param->{Address} =~ /^\d+$/) {
-            ($message, $cout, $side, $info, $left) = $c->model('Yaml')->numb($param->{Address}, $dsl);
         }
         else {
-            my ($find, $file1, $cout1, $side1, $info1, $left1 ) = $c->model('Yaml')->find(lc $param->{Address}, $dsl);
-            if ($find == 0) {
-                $message = 'No result in the database';
+            if ($param->{'rt.x'}) {
+		        if ($numb == $total) { $numb = 1 }
+		        else { $numb = $numb + 1 }
+	        }
+	        elsif ($param->{'lt.x'}) {
+                if ($numb == 1) { $numb = $total }
+		        else { $numb = $numb - 1 }
+	        }
+            elsif ($param->{'insert.x'}) {
+                ($numb, $dba) = $c->model('Data')->insert($base, $param, $bnumb);
+                ++$total;
             }
-            else {
-                ($file, $cout, $side, $info, $left) = ($file1, $cout1, $side1, $info1, $left1)
+            elsif ($param->{'del.x'}) {
+                $c->model('Data')->delete($base, $bnumb, $numb);
             }
+            elsif ($param->{'send.x'}) {
+                ($bnumb, $numb) = $c->model('Data')->send
+                ($base, $param->{idb}, $param->{files}, $numb, $param->{numb})
+            }
+            foreach my $key (keys %$param) {
+                if ($key =~ /^b(.*?)(\d+)(\w)(\d+)/) {
+                    $dba = $c->model('Data')->update
+                    ($base, $bnumb, $numb, $1, $2, $param->{$1.$2.$3.$4}, $4)
+                }
+                elsif ($key eq 'change') {
+                    $c->model('View')->change($numb, $base, $bnumb);
+                }
+                elsif ($key =~ /(kk\d+)/) {$kadr = $1}
+                elsif ($key =~ /nn(\d+)/) {$numb = $1}
+                elsif ($key =~ /pp(\d+)/) { #NEW PERSON FOTO
+                    $dba = $c->model('View')->person($base, $bnumb, $numb)
+                }
+                elsif ($key =~ /(\d+)ff(\d+)/) { #FROM PICTURE TO OBJECT
+                    $numb = $2;
+                    $bnumb = $1;
+                }
+                elsif ($key =~ /mm(\d)/) {
+                    $kadr = $c->model('View')->mini
+                    ($numb, $param, $base, $bnumb, $1, $param->{w}.'x'.$param->{h}.'+'.$param->{y}.'+'.$param->{x});            
+                }
+                elsif ($key =~ /((\d+)f\d+)/) {
+                    $bnumb = $2;
+                    $dba = LoadFile($base.$bnumb);
+                    for (1..$#{$dba}) {
+                        if ($dba->[$_][0][0] eq $1) {$numb = $_ }
+                    }
+                }
+                elsif ($key =~ /ff(\d+_.*?)ff/) {
+                    $addr1 = $1
+                }
+                elsif ($key =~ /(tt\d+)/) {
+                    $addr2 = $1
+                }
+	        }
+            $logs = $c->user->get('name');
+        }    
+        if ($param->{'find.x'}) {
+            $glob = $c->model('Find')->find($base, $addr1, $addr2);
+        }
+        else {
+            $glob = $c->model('Data')->readds($numb, $dba);
+        }
+        $root = $c->model('View')->view($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb);
+    }   
+    elsif ($param->{'P6'}) {                                               # PASSWORD VERIFICATION
+        my $pass;
+        for (1..6) { $pass = $pass.$param->{'P'.$_} if $param->{'P'.$_}}
+        if ($c->authenticate({username => "kshisa",                        # LOG IN
+                              password => $pass })) {
+            $c->response->redirect($c->uri_for("/"))
+        } 
+        else {
+            $c->res->body( "wrong password " )
         }
     }
-    if ($param->{'Find_l.x'}) {
-        $micro = $c->model('Html')->micro($dsl, $param->{'year'}+ 0);
+    else {
+        $text = $c->model('Data')->logs; 
     }
-
-    foreach my $key (keys %$param) {                                    # FIND ALL OF THAT YEAR
-        if ($key =~ /^\d+$/) {
-            $micro = $c->model('Html')->micro($dsl, $key);
-        }
-        if ($key =~ /^(\d+)\.x/) {                                      # ONE FROM FILMS OF THAT YEAR
-            ($micro, $side, $cout, $info) = ('', 0, $1, $dsl->{1}{1}{$1});
-            my $p = $cout/4 - int($cout/4);
-            if    ( $p == 0)    { $left = $cout-4}
-            elsif ( $p == 0.75) { $left = $cout-3}
-            elsif ( $p == 0.5)  { $left = $cout-2}
-            elsif ( $p == 0.25) { $left = $cout-1}
-        }
-
-    }
-
-    $full = '' if $text;
-    # my $year =  $dsl->{1}{1}{$left}{year};
     $c->stash (
-        # year     => $year,
-        user     => $user,                                              # HEADER
-        micro    => $micro,                                             # ALLPICTURES
-        l        => $lb.$l,                                             # LEFT PICTURES
-        full     => $full,                                              # CENTER-FULLINFO
-        text     => $text,                                              # HTML CODE
-        r        => $r,                                                 # RIGHT PICTURES
-        forma    => $form,
-        ident    => $ident,
+        text  => $text,
+        root  => $root,
     );
 }
 
