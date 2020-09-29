@@ -16,8 +16,8 @@
 </form>
 <script>
     $(function() {
-    $(".my-rating-2").starRating({
-        totalStars: 9,
+    $("#my-rating-2").starRating({
+        totalStars: 10,
         emptyColor: 'lightgray',
         hoverColor: 'salmon',
         activeColor: 'cornflowerblue',

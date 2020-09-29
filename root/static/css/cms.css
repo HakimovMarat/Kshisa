@@ -20,7 +20,7 @@ body{
 #dash{ 
     background: url(/images/butt/TV.png) no-repeat;
     position: relative; 
-    top: 290px;
+    top: 254px;
     left: 14px;
     width: 530px;
     height: 350px;
@@ -62,15 +62,20 @@ body{
     float: left;
 }
 #search {
-    margin-right: 5px;
+    margin-right: 34px;
     float: left;
-    left: -41px;
+    left: -2px;
     bottom: 1px;
     position: relative;
 }
 #logo {
     float: left;
     width: 125px;
+}
+#tit{
+    float: left;
+    width: 52%;
+    font-size: 40px
 }
 #Clock { 
     width: 100px;
@@ -118,10 +123,28 @@ body{
     position: relative;
     top: -10px;
 }
+#my-rating-2 {
+    float: left;
+    width: 24%;
+}
 #data {
     float: left;
     margin-right: 10px;
-    width: 28%;
+    width: 29%;
+}
+#text {
+    float: left;
+    margin-right: 10px;
+    width: 75%;
+}
+#pers {
+    float: left;
+    margin-top: 125%;
+    width: 22%;
+}
+.port {
+    width: 87%;
+    margin-bottom: 3.8px;
 }
 #pics {
     float: left;
@@ -143,7 +166,7 @@ body{
 }
 #imgsk {
     float: left;
-    height: 50%;
+    height: 100%;
     width: 100%;
     overflow-y: scroll;
 }
@@ -178,6 +201,13 @@ body{
     float: left;
     margin-left: 8px;
     text-align: center;
+    width: 9.5%;
+}
+#nav {
+    float: left;
+}
+#rigt {
+    float: left;
 }
 table {
     float:left;
@@ -189,13 +219,6 @@ select {
     width: 286px;
     height: 21px;
     font-size: 16px;
-}
-#right_col{
-    width: 16%;
-    float: left; 
-    border-left: 2px; 
-    margin-bottom:-15px;
-    text-align: center;
 }
 a.tip:hover {
     position: relative
@@ -241,7 +264,7 @@ a.tip:hover span {
 }
 .del{
     float: left;
-    margin: 14px;
+    margin: 10px;
 }
 #inst{
     float: left;

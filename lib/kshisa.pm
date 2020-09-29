@@ -21,6 +21,11 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+    Authentication
+    Authorization::Roles
+    Session
+    Session::State::Cookie
+    Session::Store::FastMmap
 /;
 
 extends 'Catalyst';
@@ -41,7 +46,7 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
-  'View::TT' => {
+    'View::TT' => {
         INCLUDE_PATH => [
             __PACKAGE__->path_to( 'root', 'src' ),
         ],
@@ -49,14 +54,27 @@ __PACKAGE__->config(
         CATALYST_VAR          => 'c',
         TIMER                 => 0,
     },
-      
-    'Controller::HTML::FormFu' => {
-        'model_stash' => {
-            schema => 'DB'
-        },
-        constructor => {
-            tt_args => {
-                ENCODING => 'UTF-8',
+   'Plugin::Authentication' => {
+        default => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    kshisa => {
+                        password => "H",
+                        editor => 'yes',
+                        roles => [qw/edit delete super/],
+                        name => 'Kshisa'
+                    },
+                    Marat => {
+                        password => "BBBBBB",
+                        roles => [qw/comment/],
+                    }
+                }
             }
         }
     },

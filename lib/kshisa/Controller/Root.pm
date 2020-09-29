@@ -23,8 +23,9 @@ sub index :Path :Args(0) {
     my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2);
     my $param = $c->req->body_params;    
     my $kadr = 6;                       #PATH TO IMAGES
-    my $bnumb = $param->{files} || 8;    
+    my $bnumb = $param->{idb} || 8;    
     my $numb  = $param->{idr} || 1; 
+    my $title  = $param->{tit};
     my $base  = $c->config->{'path'}.'Base/';
     my $dba   = LoadFile($base.$bnumb);
     my $total = $#{$dba};    
@@ -44,7 +45,8 @@ sub index :Path :Args(0) {
             }
             else {
                 if ($param->{Address}) {
-                    ($find, $mail, $imdb) = $c->model('Find')->base($dba, $param->{Address}, $base);
+                    $title = $param->{Address};
+                    ($find, $mail, $imdb) = $c->model('Find')->base($dba, $title, $base);
                     $numb = $find->[0] || $numb;
                     $glob = $c->model('Data')->readds($numb, $dba);                    
                 }
@@ -71,9 +73,9 @@ sub index :Path :Args(0) {
                 ($base, $param->{idb}, $param->{files}, $numb, $param->{numb})
             }
             foreach my $key (keys %$param) {
-                if ($key =~ /^b(.*?)(\d+)(\w)(\d+)/) {
-                    $dba = $c->model('Data')->update
-                    ($base, $bnumb, $numb, $1, $2, $param->{$1.$2.$3.$4}, $4)
+                if ($key =~ /^bb(\d+)_(\d+)_(\d+)_(\d)$/) {
+                    $dba = $c->model('Data')->update($base, $bnumb, $numb, 
+                                                     $1, $2, $3, $4, $param->{$1.'_'.$2.'_'.$3})
                 }
                 elsif ($key eq 'change') {
                     $c->model('View')->change($numb, $base, $bnumb);
@@ -108,12 +110,12 @@ sub index :Path :Args(0) {
             $logs = $c->user->get('name');
         }    
         if ($param->{'find.x'}) {
-            $glob = $c->model('Find')->find($base, $addr1, $addr2);
+            $glob = $c->model('Find')->find($base, $addr1, $addr2, $title);
         }
         else {
             $glob = $c->model('Data')->readds($numb, $dba);
         }
-        $root = $c->model('View')->view($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb);
+        $root = $c->model('View')->view($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title);
     }   
     elsif ($param->{'P6'}) {                                               # PASSWORD VERIFICATION
         my $pass;
