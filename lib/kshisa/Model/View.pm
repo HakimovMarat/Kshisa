@@ -31,7 +31,7 @@ it under the same terms as Perl itself.
 
 sub view {
     my ($self, $numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title) = @_;
-    my (@d, @t, @s, @o, @f, @i, $crew, $rigtp, $size, $nav);
+    my (@d, @t, @s, @o, @f, @i, $crew, $rigtp, $size, $nav, $navex);
     my $snip  = LoadFile($base.0);
     if ($bnumb == 1 or $bnumb == 2 or $bnumb == 3) {
         $size = $#{$snip->[3]};
@@ -45,7 +45,7 @@ sub view {
     my $code = $glob{'0_0_0'};
 
     push @f, $snip->[4][$_]    for 0..6;
-    push @i, $snip->[0][0][$_] for 0..16;
+    push @i, $snip->[0][0][$_] for 0..17;
     push @t, $snip->[0][3][$_] for 0..14;
     push @s, $snip->[0][1][$_] for 0..7;
     push @o, $snip->[0][2][$_] for 0..12;
@@ -56,7 +56,7 @@ sub view {
                $i[13].'Logo'.$i[14].
                $i[1].'image'.$i[3].'logo'.$i[4].'logout'.$i[5].$f[3].'kshisa'.$i[7].
                $i[15];
-    $panl .= $i[13].'panl'.$i[14].$o[4].'files" id="addr'.$o[5];            
+    $panl .= $i[13].'panl'.$i[14].$o[4].'files" id="addr" onchange="subm1()"/>';            
     for (1..$#{$snip->[1]}) {
         if ($snip->[1][$_][0]) {
 	        $panl .= $o[6].$_.'"';
@@ -222,7 +222,7 @@ sub view {
                          $i[2].'chekit'.
                          $i[4].'ff'.$next.'ff'.$i[14];              
             }
-            $pics .= '<hr>';
+            $pics .= '<hr>imdb';
             for (0..$#{$imdb}) {
                 my $next = $imdb->[$_];
                 $pics .= $i[0].$i[1].'image'.
@@ -237,15 +237,16 @@ sub view {
             }
             $pics .= '<hr>';
         }
-        my $k;
-        my $p = '<div id="my-rating-2" data-rating="'.($glob{'2_0_0'}/10).'">
-                <img class="post" name="post"  src="/images/images/'.$code.'p2.jpg"/></div>';
+        my $p;
         if ($kadr =~ /kk(\d+)/) {
-            $k = '<img style="margin-right: 21px; margin-left: 8px; margin-top: 4px;" 
+            $p .= '<img style="margin-right: 21px; margin-left: 8px; margin-top: 4px;" 
                   src="/images/images/'.$code.'k'.$1.'.jpg">'
         }
         else {
-            $k = '<input type="image" class="kadr" name="mm1" src="'.$f[$kadr].$code.'m1.jpg"/>
+            $p .= $i[13].'rating" data-rating="'.($glob{'2_0_0'}/10).$i[14].
+                  $i[17].'id="post" name="post"  src="/images/images/'.$code.'p2.jpg"/></div>'.
+                  $i[13].'foto'.$i[14].
+                 '<input type="image" class="kadr" name="mm1" src="'.$f[$kadr].$code.'m1.jpg"/>
                   <input type="image" class="kadr" name="mm2" src="'.$f[$kadr].$code.'m2.jpg"/>
                   <input type="image" class="kadr" name="mm3" src="'.$f[$kadr].$code.'m3.jpg"/>
                   <input type="image" class="kadr" name="mm4" src="'.$f[$kadr].$code.'m4.jpg"/>
@@ -258,7 +259,7 @@ sub view {
                        <div>('.$numb.') '.$glob{'1_0_0'}.'</div>
                        <div>'.$glob{'1_1_0'}.'('.$glob{'3_0_0'}.')</div>'
         }
-        $pics .= $i[13].'imgs'.$i[14].$p.$i[13].'foto'.$i[14].$k.$i[15];
+        $pics .= $i[13].'imgs'.$i[14].$p.$i[15];
         for my $x (5..6) {
             $pics .= $i[12].'bill'.$i[14];
             for my $y (0..3) {
@@ -272,7 +273,7 @@ sub view {
         }
         $pics .= $i[15].$i[13].'imgsf'.$i[14];
 
-        $pics .= '<div id="imgsk">';
+        $pics .= $i[13].'imgsk'.$i[14]; # KADS
             for (1..$dba->[$numb][0][3]) {
                 my $image = Image::Magick->new;
 	            $image->Read($f[0].$f[6].$code.'k'.$_.'.jpg');
@@ -288,12 +289,10 @@ sub view {
                          $i[5].$f[6].$code.'k'.$_.$i[6].
                          $i[15];
             }            
-        $pics .= '<hr></div><div id="imgsf">';
-
-        $pics .= $i[15].$i[15].$i[15];
-        for ('del', 'send', 'lt', 'rt') {
-            $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
-        }            
+        $pics .= '<hr>'.$i[15].$i[13].'imgsf'.$i[14].$i[15].$i[15].$i[15];
+        for ('del', 'send') {
+             $navex .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
+        }
     }
     elsif ($snip->[1][$bnumb][1] == 1) {
         $form = $i[13].'data'.$i[14].$t[10].$form.$t[11].$i[15];
@@ -331,19 +330,14 @@ sub view {
             }            
         }
         $pics .= $i[13].'imgsf'.$i[14].$pers.$i[15].$i[15];   
-        for ('lt', 'rt') {
-            $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
-        }
     }
     else {
         $form = $i[13].'data'.$i[14].$t[10].$form.$t[11].$i[15];
-        for ('lt', 'rt') {
-            $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
-        }
-        my %glob = %$glob;
         for (1..$glob{'0_3_0'}) {
-            $pics .= '<div class="dims"><input type="checkbox" class="chek" name="k'.$_.'"/>
-                      <img style="width: 350px;" name="'.$_.'"src="/images/find/'.$_.'.jpg"/></div>';
+            $pics .= $i[12].'dims'.$i[14].
+                      $i[1].'checkbox'.$i[2].'chek'.$i[4].'k'.$_.$i[14].
+                      $i[17].'style="width:350px;'.$i[4].$_.
+                      $i[5].$f[4].$_.$i[6].$i[15];
         } 
     }
     $pics .= $i[15];
@@ -386,11 +380,14 @@ sub view {
                       $i[8].$name.$i[10].$i[11]
 	    }
     }
-
-    return $panl.$form.$pics.$i[13].'rcol'.$i[14].$i[13].'total'.$i[14].$#{$dba}.$i[15].
-                                                  $i[13].'nav'.$i[14].$nav.$i[15].
-                                                  $i[13].'rigt'.$i[14].$rigtp.$i[15].
-                                                  $i[15]
+    for ('lt', 'rt') {
+        $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
+    }
+    return $panl.$form.$pics.$i[13].'rcol'.$i[14].
+           $i[13].'nav'.$i[14].$navex.$i[15].
+           $i[13].'total'.$i[14].$#{$dba}.$i[15].
+           $i[13].'nav'.$i[14].$nav.$i[15].
+           $i[13].'rigt'.$i[14].$rigtp.$i[15].$i[15]
 }
 sub mini {
     my ($self, $numb, $param, $base, $basenumb, $mini, $geometry) = @_;

@@ -16,44 +16,33 @@
 </form>
 <script>
     $(function() {
-    $("#my-rating-2").starRating({
-        totalStars: 10,
-        emptyColor: 'lightgray',
-        hoverColor: 'salmon',
-        activeColor: 'cornflowerblue',
-        strokeWidth: 0,
-        useGradient: false
+        $("#rating").starRating({
+            totalStars: 10,
+            emptyColor: 'lightgray',
+            hoverColor: 'salmon',
+            activeColor: 'cornflowerblue',
+            strokeWidth: 0,
+            useGradient: false
+       });
     });
-    });
-    function subm(){
-        var subm = document.getElementById("start");
-        subm.submit();
-    }
     function subm1(){
         var subm = document.getElementById("pass");
         subm.submit();
     }
-    function subm2(checkbox){
-        if(checkbox.checked == true) {
-            var subm = document.getElementById("main");
-            subm.submit();
-        }
-    }
     $(document).ready(function() {
-    var monthNames = 
-    [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]; 
-    var dayNames= ["Sun","Mon","Tue","Wen","Thu","Fri","Sut"]
-    
-    var h = $("#hours").text();
-    h = Number(h);
-    var m = $("#minut").text();
-    m = Number(m);
-    var h1 = 0;
+        var monthNames = 
+        [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]; 
+        var dayNames= ["Sun","Mon","Tue","Wen","Thu","Fri","Sut"]
+        var h = $("#hours").text();
+        h = Number(h);
+        var m = $("#minut").text();
+        m = Number(m);
+        var h1 = 0;
+        var newDate = new Date();
+        newDate.setDate(newDate.getDate());
 
-    var newDate = new Date();
-    newDate.setDate(newDate.getDate());
-    $('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + 
-    ' ' + monthNames[newDate.getMonth()]);
+        $('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + 
+           ' ' + monthNames[newDate.getMonth()]);
 
     setInterval( function() {
         var seconds = new Date().getSeconds();

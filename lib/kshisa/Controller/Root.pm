@@ -20,23 +20,26 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2);
+    my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2, $numb);
     my $param = $c->req->body_params;    
     my $kadr = 6;                       #PATH TO IMAGES
-    my $bnumb = $param->{idb} || 8;    
+    my $bnumb = $param->{files} || 8;
     my $numb  = $param->{idr} || 1; 
     my $title  = $param->{tit};
     my $base  = $c->config->{'path'}.'Base/';
     my $dba   = LoadFile($base.$bnumb);
-    my $total = $#{$dba};    
+    my $total = $#{$dba};
+    $numb  = 1 if $numb > $total;
+
     if ( $c->user_exists() ) {
-        if ($param->{'logout.x'}){  #LOGOUT
+        if ($param->{'logout.x'}){   #LOGOUT
             $c->logout;
             $c->response->redirect($c->uri_for("/"))
         }        
-        elsif ($param->{'sch.x'}) {                                                   #SEARCH IN NET
+        elsif ($param->{'sch.x'}) {  #SEARCH IN NET
             if ($param->{Address} =~ /^(\d+_.*?)(tt\d+)/) {
                 $glob = $c->model('Find')->find($base, $1, $2);
+                $title = $glob->{'1_1_0'};
             }
             elsif ($param->{Address} =~ /^(\d+)$/) {
                 if ($1 <= $total){$numb = $1}
@@ -45,12 +48,23 @@ sub index :Path :Args(0) {
             }
             else {
                 if ($param->{Address}) {
-                    $title = $param->{Address};
+                     $title = $param->{Address};
                     ($find, $mail, $imdb) = $c->model('Find')->base($dba, $title, $base);
                     $numb = $find->[0] || $numb;
                     $glob = $c->model('Data')->readds($numb, $dba);                    
                 }
             }
+        }
+        elsif ($param->{'find.x'}) {
+            foreach my $key (keys %$param) {
+                if ($key =~ /ff(\d+_.*?)ff/) {
+                    $addr1 = $1
+                }
+                elsif ($key =~ /(tt\d+)/) {
+                    $addr2 = $1
+                }
+            }
+            $glob = $c->model('Find')->find($base, $addr1, $addr2, $title);
         }
         else {
             if ($param->{'rt.x'}) {
@@ -100,22 +114,12 @@ sub index :Path :Args(0) {
                         if ($dba->[$_][0][0] eq $1) {$numb = $_ }
                     }
                 }
-                elsif ($key =~ /ff(\d+_.*?)ff/) {
-                    $addr1 = $1
-                }
-                elsif ($key =~ /(tt\d+)/) {
-                    $addr2 = $1
-                }
 	        }
-            $logs = $c->user->get('name');
-        }    
-        if ($param->{'find.x'}) {
-            $glob = $c->model('Find')->find($base, $addr1, $addr2, $title);
-        }
-        else {
+            # $logs = $c->user->get('name');
             $glob = $c->model('Data')->readds($numb, $dba);
-        }
-        $root = $c->model('View')->view($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title);
+        }    
+        $root = $c->model('View')->view
+        ($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title);
     }   
     elsif ($param->{'P6'}) {                                               # PASSWORD VERIFICATION
         my $pass;
