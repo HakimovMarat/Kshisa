@@ -55,10 +55,8 @@ sub insert {
     my $size = $#{$shem->[2]};
 	push @d, $shem->[2][$_]  for 0..$size;
 	my $name = $#{$dba1}+1;
-	my %files = ('coun' => LoadFile($base.'2'),
-		         'genr' => LoadFile($base.'3'),
-                );
     $numb = ++$#{$dba};
+	
 	($time[0], $time[1], $time[2], $time[3], $time[4], $time[5]) = localtime();
     for (0..4) { $time[$_] = "0".$time[$_] if $time[$_] < 10}
     $time = $bnumb.'f'.($time[5]-100).++$time[4].$time[3].$time[2].$time[1].$time[0];
@@ -86,7 +84,7 @@ sub insert {
 			}				
 		}
 		if ($d[$i][1] == 2) {
-			my $dbaf = $files{$d[$i][0]};
+			my $dbaf = LoadFile($base.'2');
 			for my $p (0..$a) {
 		        if ($param->{$i.'_'.$p.'_0'}) {
                     for (1..$#{$dbaf}) {

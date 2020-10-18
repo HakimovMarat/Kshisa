@@ -86,7 +86,7 @@ sub find {
             }                
         }
         elsif ($d[$x][3] == 4) {
-            ($text, $rus) = _mine( $resmail, $d[$x][4], $d[$x][5]);
+            ($text) = _mine( $resmail, $d[$x][4], $d[$x][5]);
             $glob{$x.'_0_0'} = $text->[0];
             ($text) = _mine($resimdb, $d[0][5][7]);
             $glob{$x.'_1_0'} = $text->[0]; 
@@ -148,12 +148,14 @@ sub base {
         ++$x;
     }
     my $resimdb = LWP::UserAgent->new->get($d[0][4][10].$find, 'User-Agent' => $UA);
-    my ($text) = _mine($resimdb, $d[0][4][11]);
+    my ($text, $titl) = _mine($resimdb, $d[0][4][11]);
+    $x = 0;
     for (@$text) {
         $resimdb = LWP::UserAgent->new->get($d[0][4][0].$_, 'User-Agent' => $UA);
         ($text) = _mine($resimdb, $d[0][4][9]);
         getstore($text->[0], $path.$_.'.jpg');
-        push @imdb, $_;
+        push @imdb, [$_, $titl->[$x]];
+        ++$x;
     }
     return \@find, \@mail, \@imdb
 }

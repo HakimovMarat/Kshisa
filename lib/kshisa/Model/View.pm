@@ -45,7 +45,7 @@ sub view {
     my $code = $glob{'0_0_0'};
 
     push @f, $snip->[4][$_]    for 0..6;
-    push @i, $snip->[0][0][$_] for 0..17;
+    push @i, $snip->[0][0][$_] for 0..19;
     push @t, $snip->[0][3][$_] for 0..14;
     push @s, $snip->[0][1][$_] for 0..7;
     push @o, $snip->[0][2][$_] for 0..12;
@@ -104,8 +104,10 @@ sub view {
     }
     my ($a, $b) = ($1, $2) if $d[0][2] =~ /^(\d+)_(\d+)$/;
     for my $y (1..$a) {
+        my $z = 0;
+        $z = 5 if $y == 3;
         $form .= $s[0].$s[1].
-                'bb'.'0_'.$y.'_0_5'.
+                'bb'.'0_'.$y.'_0_'.$z.
                 $s[2].$d[0][0].' '.($y+1).
                 $s[3].'0_'.$y.'_0'.$s[4].
                 $glob{'0_'.$y.'_0'}.$s[5].$s[6];
@@ -114,18 +116,27 @@ sub view {
         ($a, $b) = ($1, $2) if $d[$x][2] =~ /^(\d+)_(\d+)$/;
         for my $y (0..$a) {
             for my $z (0..$b) {
-                if ($d[$x][1] == 1) {
+                if (!$code) {
+                    if ($d[$x][1] == 4) {
+                        $form .= $t[0].$t[1].$t[2].
+                        $t[3].$d[$x][0].' '.($y+1).
+                        $t[4].$t[8].$t[9].$t[0].$t[1].$t[5].
+                        $x.'_'.$y.'_'.$z.$t[6].
+                        $glob{$x.'_'.$y.'_'.$z}.
+                        $t[7].$t[8].$t[9];
+                    }
+                    else {               
+                        $form .= $s[0].$s[1].$s[2].$d[$x][0].' '.($y+1).
+                        $s[3].$x.'_'.$y.'_'.$z.$s[4].
+                        $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6]
+                    }
+                }              
+                elsif ($d[$x][1] == 1 && $code) {
                     $form .= $s[0].$s[1].
                     'bb'.$x.'_'.$y.'_'.$z.'_0'.
                     $s[2].$d[$x][0].' '.($y+1).
                     $s[3].$x.'_'.$y.'_'.$z.$s[4].
                     $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6];
-                }
-                elsif ($d[$x][1] == 2 && !$code) {
-                    $form .= $s[0].$s[1].$s[2].$d[$x][0].' '.($y+1).
-                    $s[3].$x.'_'.$y.'_'.$z.$s[4].
-                    $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6]
-                    if $glob{$x.'_'.$y.'_'.$z};
                 }
                 elsif ($d[$x][1] == 2 && $code) {
                     my %files = ('coun' => 2, 'genr' => 3);
@@ -144,7 +155,7 @@ sub view {
 			        } 
 			        $form .= $o[8].$o[9].$o[10];
                 }
-                elsif ($d[$x][1] == 3) {
+                elsif ($d[$x][1] == 3 && $code) {
                     $form .= $s[0].$s[1].
                     'bb'.$x.'_'.$y.'_'.$z.'_1'.
                     $s[2].$d[$x][0].' '.($y+1).
@@ -152,7 +163,7 @@ sub view {
                     $form .= $glob{$x.'_'.$y.'_'.$z} if $glob{$x.'_'.$y.'_'.$z};
                     $form .= $s[5].$s[6];
                 }
-                elsif ($d[$x][1] == 4) {
+                elsif ($d[$x][1] == 4 && $code) {
                     $form .= $t[0].$t[1].$t[2].
                     'bb'.$x.'_'.$y.'_'.$z.'_0'.
                     $t[3].$d[$x][0].' '.($y+1).
@@ -224,47 +235,51 @@ sub view {
             }
             $pics .= '<hr>imdb';
             for (0..$#{$imdb}) {
-                my $next = $imdb->[$_];
-                $pics .= $i[0].$i[1].'image'.
+                my $next = $imdb->[$_][0];
+                my $titl = $imdb->[$_][1];
+                my $path = $f[0].$f[4];
+                if (-e $path.$next.'.jpg') {
+                    $pics .= $i[0].$i[1].'image'.
                          $i[2].'image'.
                          $i[4].$next.
                          $i[5].$f[4].$next.$i[6].
-                         $i[8].$next.
+                         $i[8].$titl.
                          $i[10].$i[11].
                          $i[1].'checkbox'.
                          $i[2].'chekit'.
-                         $i[4].$next.$i[14];              
+                         $i[4].$next.$i[14];                    
+                }
+            
             }
             $pics .= '<hr>';
         }
         my $p;
         if ($kadr =~ /kk(\d+)/) {
-            $p .= '<img style="margin-right: 21px; margin-left: 8px; margin-top: 4px;" 
-                  src="/images/images/'.$code.'k'.$1.'.jpg">'
+            $p .= $i[13].'shot'.$i[14].$i[17].$i[5].$f[6].$code.'k'.$1.$i[6]
         }
         else {
             $p .= $i[13].'rating" data-rating="'.($glob{'2_0_0'}/10).$i[14].
-                  $i[17].'id="post" name="post"  src="/images/images/'.$code.'p2.jpg"/></div>'.
-                  $i[13].'foto'.$i[14].
-                 '<input type="image" class="kadr" name="mm1" src="'.$f[$kadr].$code.'m1.jpg"/>
-                  <input type="image" class="kadr" name="mm2" src="'.$f[$kadr].$code.'m2.jpg"/>
-                  <input type="image" class="kadr" name="mm3" src="'.$f[$kadr].$code.'m3.jpg"/>
-                  <input type="image" class="kadr" name="mm4" src="'.$f[$kadr].$code.'m4.jpg"/>
-                  
-                  <div>w <input type="text"  name="w" value="300" size="2" />
-                       h <input type="text"  name="h" value="180" size="2" />
-                       x <input type="text"  name="y" value="10"  size="2" />
-                       y <input type="text"  name="x" value="10"  size="2" />
-                       <button name="change">change</button></div>
-                       <div>('.$numb.') '.$glob{'1_0_0'}.'</div>
-                       <div>'.$glob{'1_1_0'}.'('.$glob{'3_0_0'}.')</div>'
+                  $i[1].'image'.$i[3].'post'.$i[4].'post'.$i[5].$f[6].$code.'p2'.$i[6].$i[15].
+                  $i[13].'foto'.$i[14];
+            for (1..4) {
+                $p .= $i[1].'image'.$i[2].'kadr'.$i[4].'mm'.$_.$i[5].$f[$kadr].$code.'m'.$_.$i[6];
+            }
+            $p .= $i[13].$i[14];
+            my @dime = ('w', 'h', 'y', 'x');
+            my @valu = (300, 180, 10, 10);
+            for (0..3) {
+                $p .= $dime[$_].$i[1].'text'.$i[4].$dime[$_].$i[16].$valu[$_].'" size="2"'.$i[14];
+            }
+            $p .= $i[18].$i[4].'change'.$i[14].'change'.$i[19].$i[15].
+                  $i[13].'title1'.$i[14].'('.$numb.') '.$glob{'1_0_0'}.$i[15].
+                  $i[13].'title2'.$i[14].$glob{'1_1_0'}.'('.$glob{'3_0_0'}.')'.$i[15];
         }
         $pics .= $i[13].'imgs'.$i[14].$p.$i[15];
         for my $x (5..6) {
             $pics .= $i[12].'bill'.$i[14];
             for my $y (0..3) {
                  $pics .= $i[0].$i[1].'image'.
-                          $i[4].$dba->[$numb][$x][$y][1].
+                          $i[4].$dba->[$numb][$x][$y][0].
                           $i[5].$f[3].$dba->[$numb][$x][$y][1].$i[7].$i[8].
                           $dba->[$numb][$x][$y][2].$i[10].$i[11]
                            if $dba->[$numb][$x][$y][1]

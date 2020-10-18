@@ -20,7 +20,7 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2, $numb);
+    my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2);
     my $param = $c->req->body_params;    
     my $kadr = 6;                       #PATH TO IMAGES
     my $bnumb = $param->{files} || 8;
@@ -80,7 +80,7 @@ sub index :Path :Args(0) {
                 ++$total;
             }
             elsif ($param->{'del.x'}) {
-                $c->model('Data')->delete($base, $bnumb, $numb);
+                $text = 'Are you sure? <button name="delete">delete</button>'
             }
             elsif ($param->{'send.x'}) {
                 ($bnumb, $numb) = $c->model('Data')->send
@@ -94,12 +94,15 @@ sub index :Path :Args(0) {
                 elsif ($key eq 'change') {
                     $c->model('View')->change($numb, $base, $bnumb);
                 }
+                elsif ($key eq 'delete') {
+                    $c->model('Data')->delete($base, $bnumb, $numb);
+                }
                 elsif ($key =~ /(kk\d+)/) {$kadr = $1}
                 elsif ($key =~ /nn(\d+)/) {$numb = $1}
-                elsif ($key =~ /pp(\d+)/) { #NEW PERSON FOTO
+                elsif ($key =~ /pp(\d+)/) {                                    #NEW PERSON FOTO
                     $dba = $c->model('View')->person($base, $bnumb, $numb)
                 }
-                elsif ($key =~ /(\d+)ff(\d+)/) { #FROM PICTURE TO OBJECT
+                elsif ($key =~ /(\d+)ff(\d+)/) {                               #FROM PICTURE TO OBJECT
                     $numb = $2;
                     $bnumb = $1;
                 }

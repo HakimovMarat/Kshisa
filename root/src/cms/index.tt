@@ -2,32 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    [% link %]
+    <title>kshisa127</title>
+    <link rel="stylesheet" href="/static/css/cms.css" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
     <form method="post" action="/cms">
-        [% panl %]
-        [% pics %]
-        [% rows %]
-        [% crew %]
-        <div id="left_col">
-        [% leftp %]
-        </div>
-        <div id="center_col">
-            <table>
-                <tbody>	
-	                [% forml %]
-	            </tbody>
-            </table>
-	        <table>
-                <tbody>
-		            [% formr %]
-                </tbody>
-            </table>
-        </div>
-        <div id="right_col">
-        [% rigtp %] 
-        </div>
+        [% panel %]
+        [% rigtp %]
+        [% forml %]
+        [% pices %]
+        [% formr %]        
     </form>
 </body>
