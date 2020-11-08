@@ -101,7 +101,7 @@ sub find {
     my $x = 0;
     for (@$kadr) {
         my $reskadr = LWP::UserAgent->new->get($d[0][4][0].
-                                        $imdb.$d[0][4][4].$_.$d[0][4][5], 'User-Agent' => $UA);
+                                        $imdb.$d[0][4][4].$_, 'User-Agent' => $UA);
         ($text) = _mine($reskadr, $d[0][4][6]);
         if ($text->[0]) {
             getstore($text->[0], $path.($x += 1).'.jpg');
@@ -144,7 +144,8 @@ sub base {
         else {
             getstore($_, $path.$kadr->[$x].'.jpg');
         }
-        push @mail, $kadr->[$x];
+        my ($title, $year) = _mine($resmail, $d[0][5][9]);
+        push @mail, [$kadr->[$x], $title->[$x].$year->[$x]];
         ++$x;
     }
     my $resimdb = LWP::UserAgent->new->get($d[0][4][10].$find, 'User-Agent' => $UA);
@@ -153,11 +154,12 @@ sub base {
     for (@$text) {
         $resimdb = LWP::UserAgent->new->get($d[0][4][0].$_, 'User-Agent' => $UA);
         ($text) = _mine($resimdb, $d[0][4][9]);
+        $titl->[$x] =~ tr[</a>][ ]d;
         getstore($text->[0], $path.$_.'.jpg');
         push @imdb, [$_, $titl->[$x]];
         ++$x;
     }
-    return \@find, \@mail, \@imdb
+    return \@find, \@mail, \@imdb, $kadr
 }
 =encoding utf8
 =head1 AUTHOR

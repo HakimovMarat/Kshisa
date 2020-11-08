@@ -34,6 +34,7 @@ body{
     float:  left;
     width:  90px;
     height: 44px;
+    background: #c7ecef;
 }
 #total{
     font-size: 20px;
@@ -67,9 +68,9 @@ body{
     position: relative;
     margin-right: 12px;
     float: left;
-    left: -2px;
     bottom: 1px;
     border: 1px solid;
+    background: #c7ecef;
 }
 #logo {
     float: left;
@@ -81,14 +82,21 @@ body{
     font-size: 40px
 }
 #Clock { 
-    width: 100px;
+    width: 90px;
     height: 70px;
     float: left;
 }
 #Date { 
     font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
     font-size: 18px;
-    margin-bottom: 11px;
+    margin: auto;
+    text-shadow: 0 0 5px gray; 
+    float: left;
+}
+#timer { 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-size: 18px;
+    margin: 4px;
     text-shadow: 0 0 5px gray; 
     float: left;
 }
@@ -131,6 +139,11 @@ body{
     width: 23%;
     padding-left: 10px;
 }
+#dime {
+    color: white;
+    font-size: 1.5em;
+    margin-bottom: 6px;
+}
 #data {
     float: left;
     margin-right: 10px;
@@ -143,7 +156,7 @@ body{
 }
 #pers {
     float: left;
-    margin-top: 125%;
+    margin-top: 67%;
     width: 22%;
 }
 .port {
@@ -176,13 +189,13 @@ body{
 }
 #title1 {
     color: white;
-    margin: -1px;
+    margin: auto;
     float: left;
     width: 100%;
 }
 #title2 {
     color: #19b5c4;
-    margin: -1px;
+    margin: auto;
     float: left;
     width: 100%;
     font-size: 13px;
@@ -235,12 +248,13 @@ body{
 }
 table {
     float:left;
+    width: 100%;
 }
 hr {
     margin-bottom: 10px;
 }
 select {
-    width: 286px;
+    width: 276px;
     height: 21px;
     font-size: 16px;
 }

@@ -36,7 +36,7 @@ sub index :Path :Args(0) {
             $c->logout;
             $c->response->redirect($c->uri_for("/"))
         }        
-        elsif ($param->{'sch.x'}) {  #SEARCH IN NET
+        elsif ($param->{Address} ) {  #SEARCH IN NET
             if ($param->{Address} =~ /^(\d+_.*?)(tt\d+)/) {
                 $glob = $c->model('Find')->find($base, $1, $2);
                 $title = $glob->{'1_1_0'};
@@ -47,12 +47,9 @@ sub index :Path :Args(0) {
                 $glob = $c->model('Data')->readds($numb, $dba);
             }
             else {
-                if ($param->{Address}) {
-                     $title = $param->{Address};
-                    ($find, $mail, $imdb) = $c->model('Find')->base($dba, $title, $base);
-                    $numb = $find->[0] || $numb;
-                    $glob = $c->model('Data')->readds($numb, $dba);                    
-                }
+                $title = $param->{Address};
+                ($find, $mail, $imdb) = $c->model('Find')->base($dba, $param->{Address}, $base);
+                $glob = $c->model('Data')->readds($numb, $dba);                    
             }
         }
         elsif ($param->{'find.x'}) {
@@ -64,7 +61,7 @@ sub index :Path :Args(0) {
                     $addr2 = $1
                 }
             }
-            $glob = $c->model('Find')->find($base, $addr1, $addr2, $title);
+            ($glob, $text) = $c->model('Find')->find($base, $addr1, $addr2, $title);
         }
         else {
             if ($param->{'rt.x'}) {

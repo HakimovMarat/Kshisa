@@ -6,6 +6,8 @@ use Image::Magick;
 use LWP;
 use LWP::Simple qw(getstore);
 use File::Copy;
+#use Log::Any '$log';
+#use Log::Any::Adapter ('File', '/home/marat/Kshisa/file.log');
 extends 'Catalyst::Model';
 
 =head1 NAME
@@ -100,7 +102,7 @@ sub insert {
 		}
 		if ($d[$i][3] == 3) {
             for my $p (0..$a) {
-				if ($param->{$i.'_'.$p.'_2'}) {
+				if ( length($param->{$i.'_'.$p.'_2'}) > 0) {
 					my $flag = 0;
                     for (1..$#{$dba1}) {
                         if ($param->{$i.'_'.$p.'_2'} eq $dba1->[$_][1][1]) {
@@ -109,7 +111,7 @@ sub insert {
 							$dba->[$numb][$i][$p][2] = $dba1->[$_][1][1];
 							$dba1->[$_][0][1] = $param->{$i.'_'.$p.'_0'};
 							if ($dba1->[$_][2][0] == 1) {
-							    $dba->[$numb][$i][$p][3] = $dba1->[$_][0][0];
+
 							}
 							elsif ($dba1->[$_][2][0] == 0) {
 							    $dba->[$numb][$i][$p][3] = 'blank';
@@ -124,7 +126,6 @@ sub insert {
 	                    $dba->[$numb][$i][$p][0] = '1f'.$timea;
                         $dba->[$numb][$i][$p][1] = $param->{$i.'_'.$p.'_1'};
 						$dba->[$numb][$i][$p][2] = $param->{$i.'_'.$p.'_2'};
-						$dba->[$numb][$i][$p][3] = 'blank';
 						$dba1->[$name][0][0] = '1f'.$timea;
 						$dba1->[$name][0][1] = $param->{$i.'_'.$p.'_0'};
 						$dba1->[$name][0][2] = $param->{$i.'_'.$p.'_3'};
@@ -143,11 +144,15 @@ sub insert {
                                 $image->Write($f[0].$f[5].$dba1->[$name][0][0].'.jpg');
 						        $image->Write($f[0].$f[6].$dba1->[$name][0][0].'.jpg');
 							    $dba1->[$name][2][0] = 1;
-							    $dba->[$numb][$i][$p][3] = '1f'.$timea;
-							    sleep 1;
 						    }
 						}
-						$name = $name + 1;
+						if ($dba1->[$name][2][0] == 1) {
+
+						}
+						elsif ($dba1->[$name][2][0] == 0) {
+							$dba->[$numb][$i][$p][3] = 'blank';
+						}
+						$name = $name + 1;	
 						sleep 1;
                     }
 				}
@@ -222,7 +227,29 @@ sub update {
 	my $dba = LoadFile($base.$bnumb);	
 	my $shem = LoadFile($base.0);
 	push @f, $shem->[4][$_] for 0..6;
-
+	if ($bnumb == 1 && $h == 1) {
+	    if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
+	        $newl = $newl * 1;
+	        $dba->[$numb][$h][$w] = $newl;
+        }
+        else {
+	        $dba->[$numb][$h][$w] = $newl;
+        }
+	    my @files = (8, 4);
+	    for my $n (@files) {
+            my $file = LoadFile($base.$n);
+            for my $x (1..$#{$file}) {
+                for my $y (7..12) {
+                    for my $z (0..$file->[0][$y][2]) {
+                        if ($file->[$x][$y][$z][0] eq $dba->[$numb][0][0]) {
+                            $file->[$x][$y][$z][1] = $newl;
+                        }
+                    }
+                }  
+            } 
+	        DumpFile($base.$n, $file);           
+        }
+    }
 	if ($n == 0) {
 		if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
 			$newl = $newl * 1;
@@ -298,51 +325,17 @@ sub update {
                 DumpFile($base.$bnumb, $dba);
 			}
 		}
+		elsif ($bnumb == 1) {
+			if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
+			    $newl = $newl * 1;
+			    $dba->[$numb][$h][$w] = $newl;
+		    }
+		    else {
+			    $dba->[$numb][$h][$w] = $newl;
+		    }			    
+		}
 		else {
-			if ($bnumb == 1) {
-			  if ($h == 1) {
-			    if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
-			        $newl = $newl * 1;
-			        $dba->[$numb][$h][$w] = $newl;
-		        }
-		        else {
-			        $dba->[$numb][$h][$w] = $newl;
-		        }
-			    my @files = (8, 4);
-			    for my $n (@files) {
-                    my $file = LoadFile($base.$n);
-                    for my $x (1..$#{$file}) {
-                        for my $y (7..12) {
-                            for my $z (0..$file->[0][$y][2]) {
-                                if ($file->[$x][$y][$z][0] eq $dba->[$numb][0][0]) {
-                                    $file->[$x][$y][$z][1] = $newl;
-                                }
-                            }
-                        }  
-                    } 
-				    DumpFile($base.$n, $file);           
-                }
-			  }
-			  else {
-				  if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
-			        $newl = $newl * 1;
-			        $dba->[$numb][$h][$w] = $newl;
-		          }
-		          else {
-			        $dba->[$numb][$h][$w] = $newl;
-		          }			    
-			  }		
-			}
-			else {
-				if ($newl =~ m{^([-+]? [\d]+  \.?[\d]* )$}x) {
-			        $newl = $newl * 1;
-			        $dba->[$numb][$h][$w][$d] = $newl;
-		        }
-		        else {
-			        $dba->[$numb][$h][$w][$d] = $newl;
-		        }
-			}
-
+			$dba->[$numb][$h][$w][$d] = $newl;
 		}
 	}	
 	elsif ($n == 5) {
