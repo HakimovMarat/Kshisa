@@ -130,84 +130,87 @@ sub view {
                     else {               
                         $form .= $s[0].$s[1].$s[2].$d[$x][0].' ('.($y+1).')'.
                         $s[3].$x.'_'.$y.'_'.$z.$s[4].
-                        $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6]
+                        $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6].$s[7]
                     }
-                }              
-                elsif ($d[$x][1] == 1 && $code) {
-                    $form .= $s[0].$s[1].
-                    'bb'.$x.'_'.$y.'_'.$z.'_0'.
-                    $s[2].$d[$x][0].' ('.($y+1).')'.
-                    $s[3].$x.'_'.$y.'_'.$z.$s[4].
-                    $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6];
                 }
-                elsif ($d[$x][1] == 2 && $code) {
-                    my $dset = LoadFile($base.2);
-                    if ( length($glob{$x.'_'.$y.'_'.$z}) > 0 ) {
-                        $select .= $o[0].$o[1].'bb'.$x.'_'.$y.'_'.$z.'_2'.
-                             $o[2].$d[$x][0].' ('.($y+1).')'.
-                             $o[3].$o[4].$x.'_'.$y.'_'.$z.$o[5].
-                             $o[6].$o[7];
-	                    for my $list (1..$#{$dset}) {
-		                    $select .= $o[6].$dset->[$list][0][1];
-                            if ($glob{$x.'_'.$y.'_'.$z} && 
-                               $dset->[$list][0][$z] eq $glob{$x.'_'.$y.'_'.$z}) {
-                               $select .= $o[12]
+                else {              
+                    if ($d[$x][1] == 1) {
+                        $form .= $s[0].$s[1].
+                        'bb'.$x.'_'.$y.'_'.$z.'_0'.
+                        $s[2].$d[$x][0].' ('.($y+1).')'.
+                        $s[3].$x.'_'.$y.'_'.$z.$s[4].
+                        $glob{$x.'_'.$y.'_'.$z}.$s[5].$s[6].$s[7];
+                    }
+                    elsif ($d[$x][1] == 2) {
+                        my $dset = LoadFile($base.2);
+                        if ( length($glob{$x.'_'.$y.'_'.$z}) > 0 ) {
+                            $select .= $o[0].$o[1].'bb'.$x.'_'.$y.'_'.$z.'_2'.
+                                        $o[2].$d[$x][0].' ('.($y+1).')'.
+                                        $o[3].$o[4].$x.'_'.$y.'_'.$z.$o[5].
+                                        $o[6].$o[7];
+	                                    for my $list (1..$#{$dset}) {
+		                                    $select .= $o[6].$dset->[$list][0][1];
+                                            if ($glob{$x.'_'.$y.'_'.$z} && 
+                                                $dset->[$list][0][$z] eq $glob{$x.'_'.$y.'_'.$z}) {
+                                                    $select .= $o[12]
+                                            }
+			                                 $select .= $o[7].$dset->[$list][1][0].$o[8];
+			                            } 
+			                            $select .= $o[8].$o[9].$o[10]                        
+                        }
+                        elsif ($flag == 0) {
+                            $select .= $o[0].$o[1].'bb'.$x.'_'.$y.'_'.$z.'_2'.
+                                        $o[2].$d[$x][0].' ('.($y+1).')'.
+                                        $o[3].$o[4].$x.'_'.$y.'_'.$z.$o[5].
+                                        $o[6].$o[7];
+	                                    for my $list (1..$#{$dset}) {
+		                                    $select .= $o[6].$dset->[$list][0][1].
+                                            $o[7].$dset->[$list][1][0].$o[8]
+      			                        } 
+			                            $select .= $o[8].$o[9].$o[10];
+                                        $flag = 1;
+                        }
+                    }
+                    elsif ($d[$x][1] == 3) {
+                        if ( length($glob{$x.'_'.$y.'_0'}) > 0 ) {
+                            if ($z==0) {
+                                $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
+                                         $s[2].$d[$x][0].' ('.($y+1).')'.
+                                         $s[3].$x.'_'.$y.'_'.$z.$s[4].$s[5].$s[6].$s[7]
                             }
-			                $select .= $o[7].$dset->[$list][1][0].$o[8];
-			           } 
-			           $select .= $o[8].$o[9].$o[10]                        
-                    }
-                    elsif ($flag == 0) {
-                        $select .= $o[0].$o[1].'bb'.$x.'_'.$y.'_'.$z.'_2'.
-                             $o[2].$d[$x][0].' ('.($y+1).')'.
-                             $o[3].$o[4].$x.'_'.$y.'_'.$z.$o[5].
-                             $o[6].$o[7];
-	                    for my $list (1..$#{$dset}) {
-		                    $select .= $o[6].$dset->[$list][0][1].$o[7].$dset->[$list][1][0].$o[8]
-      			        } 
-			            $select .= $o[8].$o[9].$o[10];
-                        $flag = 1;
-                    }
-                }
-                elsif ($d[$x][1] == 3 && $code) {
-                    if ( length($glob{$x.'_'.$y.'_0'}) > 0 ) {
-                        if ($z==0) {
-                            $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
-                                $s[2].$d[$x][0].' ('.($y+1).')'.
-                                $s[3].$x.'_'.$y.'_'.$z.$s[4].$s[5].$s[6]
+                            elsif ($z==1 or $z==2){
+                                $form .= $s[0].$s[1].$s[2].'name'.$s[3].$s[4];
+                                $form .= $glob{$x.'_'.$y.'_'.$z} if $glob{$x.'_'.$y.'_'.$z};
+                                $form .= $s[5].$s[6].$s[7]
+                            }
+                            elsif ($z==3) {
+                                $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
+                                    $s[2].'role'.
+                                    $s[3].$x.'_'.$y.'_'.$z.$s[4].
+                                    $glob{$x.'_'.$y.'_'.$z}.
+                                    $s[5].$s[6].$s[7]
+                            }
                         }
-                        elsif ($z==1 or $z==2){
-                            $form .= $s[0].$s[1].$s[2].'name'.$s[3].$s[4];
-                            $form .= $glob{$x.'_'.$y.'_'.$z} if $glob{$x.'_'.$y.'_'.$z};
-                            $form .= $s[5].$s[6]
-                        }
-                        elsif ($z==3) {
-                            $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
-                                 $s[2].'role'.
-                                 $s[3].$x.'_'.$y.'_'.$z.$s[4].
-                                 $glob{$x.'_'.$y.'_'.$z}.
-                                 $s[5].$s[6]
+                        elsif ($flag == 0) {
+                            if ($z==0) {
+                                $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
+                                         $s[2].$d[$x][0].' ('.($y+1).')'.$s[3].
+                                         $x.'_'.$y.'_'.$z.$s[4].$s[5];
+                                $form .= $t[2].'roles'.$t[3].'roles'.$t[4] if $x == 7;
+                                $form .= $s[6].$s[7]
+                            }
+                            $flag = 1;
                         }
                     }
-                    elsif ($flag == 0) {
-                        if ($z==0) {
-                            $form .= $s[0].$s[1].'bb'.$x.'_'.$y.'_'.$z.'_1'.
-                                $s[2].$d[$x][0].' ('.($y+1).')'.
-                                $s[3].$x.'_'.$y.'_'.$z.$s[4].$s[5].$s[6]
-                        }
-                        $flag = 1;
+                    elsif ($d[$x][1] == 4) {
+                        $area .= $t[0].$t[1].$t[2].'bb'.$x.'_'.$y.'_'.$z.'_0'.
+                                 $t[3].$d[$x][0].' '.($y+1).
+                                 $t[4].$t[8].$t[9].$t[0].$t[1].$t[5].
+                                 $x.'_'.$y.'_'.$z.$t[6];
+                        $area .= $glob{$x.'_'.$y.'_'.$z} if $glob{$x.'_'.$y.'_'.$z};
+                        $area .= $t[7].$t[8].$t[9];
                     }
                 }
-                elsif ($d[$x][1] == 4 && $code) {
-                    $area .= $t[0].$t[1].$t[2].
-                            'bb'.$x.'_'.$y.'_'.$z.'_0'.
-                            $t[3].$d[$x][0].' '.($y+1).
-                            $t[4].$t[8].$t[9].$t[0].$t[1].$t[5].
-                            $x.'_'.$y.'_'.$z.$t[6];
-                    $area .= $glob{$x.'_'.$y.'_'.$z} if $glob{$x.'_'.$y.'_'.$z};
-                    $area .= $t[7].$t[8].$t[9];
-                }
-                                                         
             }
         }
     }
@@ -299,7 +302,8 @@ sub view {
         }
         else {
             $p .= $i[13].'rating" data-rating="'.($glob{'2_0_0'}/10).$i[14].
-                  $i[1].'image'.$i[3].'post'.$i[4].'post'.$i[5].$f[6].$code.'p2'.$i[6].$i[15].
+                  $i[1].'image'.$i[3].'post'.$i[4].'post'.$i[5].$f[6].$code.'p2'.$i[6].
+                  $i[13].'total'.$i[14].'IMDb: '.($glob{'2_0_0'}/10).$i[15].$i[15].
                   $i[13].'foto'.$i[14];
             for (1..4) {
                 $p .= $i[1].'image'.$i[2].'kadr'.$i[4].'mm'.$_.$i[5].$f[$kadr].$code.'m'.$_.$i[6];
@@ -505,29 +509,11 @@ sub person {
 	my $code = $dba->[$numb][0][0];
 	my $image = Image::Magick->new;
 	$image->Read($f[0].$f[4].'00.jpg');
+    
     $image->Resize(width=>170, height=>240);
 	$image->Write($f[0].$f[5].$code.'.jpg');
 	$image->Write($f[0].$f[6].$code.'.jpg');
 	$dba->[$numb][2][0] = 1;
-	my ($x, $y, $z);
-	for $x (1..$#{$dba8}) {
-		for $y (7..12) {
-		    for $z (0..$#{$dba8->[$x][$y]}) {
-				if ($dba8->[$x][$y][$z][0] eq $dba->[$numb][0][0]) {
-                    $dba8->[$x][$y][$z][3] = $dba8->[$x][$y][$z][0]						
-				}
-		    }
-		}
-	}
-	for $x (1..$#{$dba4}) {
-		for $y (7..12) {
-		    for $z (0..$#{$dba4->[$x][$y]}) {
-				if ($dba4->[$x][$y][$z][0] eq $dba->[$numb][0][0]) {
-                    $dba4->[$x][$y][$z][3] = $dba4->[$x][$y][$z][0]						
-				}
-		    }
-		}
-	}
 	DumpFile($base.$basenumb, $dba);
 	DumpFile($base.8, $dba8);
 	DumpFile($base.4, $dba4);

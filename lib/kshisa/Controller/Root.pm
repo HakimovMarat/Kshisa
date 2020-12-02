@@ -25,7 +25,7 @@ sub index :Path :Args(0) {
     my $kadr = 6;                       #PATH TO IMAGES
     my $bnumb = $param->{files} || 8;
     my $numb  = $param->{idr} || 1; 
-    my $title  = $param->{tit};
+    my $title = $param->{tit};
     my $base  = $c->config->{'path'}.'Base/';
     my $dba   = LoadFile($base.$bnumb);
     my $total = $#{$dba};
@@ -89,10 +89,14 @@ sub index :Path :Args(0) {
                                                      $1, $2, $3, $4, $param->{$1.'_'.$2.'_'.$3})
                 }
                 elsif ($key eq 'change') {
-                    $c->model('View')->change($numb, $base, $bnumb);
+                    $c->model('View')->change($numb, $base, $bnumb)
                 }
                 elsif ($key eq 'delete') {
-                    $c->model('Data')->delete($base, $bnumb, $numb);
+                    $c->model('Data')->delete($base, $bnumb, $numb)
+                }
+                elsif ($key eq 'roles') {
+                    $c->model('Find')->roles($base, $bnumb, $numb, $param->{'0_2_0'});
+                    $dba = LoadFile($base.$bnumb);
                 }
                 elsif ($key =~ /(kk\d+)/) {$kadr = $1}
                 elsif ($key =~ /nn(\d+)/) {$numb = $1}

@@ -161,6 +161,51 @@ sub base {
     }
     return \@find, \@mail, \@imdb, $kadr
 }
+sub roles {
+    my ($self, $base, $bnumb, $numb, $imdb) = @_;
+    my (@d, $text, %actors);
+    my $snip  = LoadFile($base.0);
+    my $size = $#{$snip->[2]};
+    push @d, $snip->[2][$_] for 0..$size;
+    my $dba  = LoadFile($base.$bnumb);
+
+    my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
+    my $resimdb = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][7], 'User-Agent' => $UA);
+    ($text) = _mine($resimdb, $d[0][4][13]);    
+    my ($adr, $pers) = _mine($resimdb, $d[0][4][8]);
+    my $first = $dba->[$numb][8][0][2];
+    my @roles;
+    for (@$text) {
+        if ($_ =~ m{<a.*?>(.*?)</a>}mg) {
+            push @roles, $1
+        }
+        else {
+            push @roles, $_
+        }
+    }
+    my @pers = @$pers;
+    my (@actors, $flag);
+    for (@pers) {
+        if ($_ eq $first && $flag != 1) {
+           push @actors, $_;
+           $flag = 1;
+        }
+        elsif ($flag == 1) {
+            push @actors, $_;
+        }
+    }
+    for my $x (0..13) {
+        for my $y (0..$#roles) {
+            if (length($dba->[$numb][8][$x][0]) > 0) {
+                if ($dba->[$numb][8][$x][2] eq $actors[$y]) {
+                   $dba->[$numb][8][$x][3] = $roles[$y];
+                }
+            }
+        }        
+    }
+
+    DumpFile($base.$bnumb, $dba);
+}
 =encoding utf8
 =head1 AUTHOR
 Marat Haakimoff
