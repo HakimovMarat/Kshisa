@@ -110,12 +110,6 @@ sub insert {
 							$dba->[$numb][$i][$p][1] = $dba1->[$_][1][0];
 							$dba->[$numb][$i][$p][2] = $dba1->[$_][1][1];
 							$dba1->[$_][0][1] = $param->{$i.'_'.$p.'_0'};
-							if ($dba1->[$_][2][0] == 1) {
-
-							}
-							elsif ($dba1->[$_][2][0] == 0) {
-							    $dba->[$numb][$i][$p][3] = 'blank';
-							} 
 							$flag = 1
 						}
 					}
@@ -145,12 +139,6 @@ sub insert {
 						        $image->Write($f[0].$f[6].$dba1->[$name][0][0].'.jpg');
 							    $dba1->[$name][2][0] = 1;
 						    }
-						}
-						if ($dba1->[$name][2][0] == 1) {
-
-						}
-						elsif ($dba1->[$name][2][0] == 0) {
-							$dba->[$numb][$i][$p][3] = 'blank';
 						}
 						$name = $name + 1;	
 						sleep 1;
@@ -213,14 +201,6 @@ sub insert {
 
 	return $numb, $dba
 }
-sub send {
-	my ($self, $base, $bnumb, $files, $numb) = @_;
-	my $dbaa = LoadFile($base.$bnumb);
-    my $dbab = LoadFile($base.$files);
-    $dbab->[$bnumb] = $dbaa->[$numb];
-    DumpFile($base.$files, $dbab);
-    return $files, $bnumb
-}
 sub update {
     my ($self, $base, $bnumb, $numb, $h, $w, $d, $n, $newl) = @_;
 	my (@f,$line, $imdb, $eng, $r);
@@ -278,12 +258,6 @@ sub update {
 		        my $flag = 0;
 		        for my $x (1..$#{$dba1}) {
                     if ($newl eq $dba1->[$x][0][2]) {
-				        if ($dba1->[$x][2][0] == 0) {
-					        $dba->[$numb][$h][$w][3] = 'blank'
-				        }
-				        elsif ($dba1->[$x][2][0] == 1) {
-					        $dba->[$numb][$h][$w][3] = $dba1->[$x][0][0]
-				        }
 				        $dba->[$numb][$h][$w][0] = $dba1->[$x][0][0];
 				        $dba->[$numb][$h][$w][1] = $dba1->[$x][1][0];
 				        $dba->[$numb][$h][$w][2] = $dba1->[$x][1][1];
@@ -297,10 +271,8 @@ sub update {
                     for (0..4) { $time[$_] = "0".$time[$_] if $time[$_] < 10}
                     my $timea = ($time[5]-100).++$time[4].$time[3].$time[2].$time[1].$time[0];
 	                $dba->[$numb][$h][$w][0] = '1f'.$timea;
-                    $dba1->[$numb1][0][0] = '1f'.$timea;
-				    $dba1->[$numb1][0][1] = '1f'.$timea;
+                    $dba1->[$numb1][0][0]    = '1f'.$timea;
 				    $dba1->[$numb1][2][0] = 0;
-				    $dba->[$numb][$h][$w][3] = 'blank';
      		        my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
                     $imdb = LWP::UserAgent->new->get('https://www.imdb.com/name/'.$newl, 'User-Agent' => $UA);
                     for ($imdb->decoded_content) {
@@ -310,7 +282,6 @@ sub update {
 				        while ( $_ =~ m{name-poster".*?.*?\n?.*?\n.*?\n.*?\n.*?\nsrc="(.*?)"}mg) {
 					        getstore($1, $f[0].$f[5].'1f'.$timea.'.jpg');
 						    getstore($1, $f[0].$f[6].'1f'.$timea.'.jpg');
-					        $dba->[$numb][$h][$w][3] = '1f'.$timea;
                             $dba1->[$numb1][2][0] = 1;
 				        }
 		            }
@@ -372,21 +343,76 @@ sub delete {
     splice @film, $numb, 1;
     my $dba0 = [@film];
     DumpFile($base.$bnumb, $dba0);
+	return $dba0
+}
+sub delpics {
+    my ($self, $base, $bnumb, $numb, $param) = @_;
+	my $dba = LoadFile($base. $bnumb);
+	my $pics = $dba->[$numb][0][3];
+	my $shem = LoadFile($base.0);
+	my @f;
+	push @f, $shem->[4][$_] for 0..6;
+	for my $x (1..$dba->[$numb][0][3]) {
+        if ($param->{'kad'.$x}) {
+			unlink $f[0].$f[6].$dba->[$numb][0][0].'k'.$x.'.jpg';
+			$pics = $pics - 1;
+		}
+	}
+	my $z = 1;
+	for my $y (1..$dba->[$numb][0][3]) {
+		if (-e $f[0].$f[6].$dba->[$numb][0][0].'k'.$y.'.jpg'){
+		    rename $f[0].$f[6].$dba->[$numb][0][0].'k'.$y.'.jpg', 
+		           $f[0].$f[6].$dba->[$numb][0][0].'k'.$z.'.jpg';
+		    $z++;			
+		}
+	}
+	$dba->[$numb][0][3] = $pics;
+	DumpFile($base.$bnumb, $dba);
+	return $dba
+}
+sub send {
+	my ($self, $base, $bnumb, $numb, $file) = @_;
+	my $snip  = LoadFile($base.0);
+	my @f;
+	push @f, $snip->[4][$_]    for 0..6;
+	my $dbaa = LoadFile($base.$bnumb);
+    my $dbab = LoadFile($base.$file);
+    my $total = $#{$dbab} + 1;
+
+	my $code = $dbaa->[$numb][0][0];
+    my $newc = $file.$1 if $code =~ /\d+(f\d+)/;
+
+	rename $f[0].$f[6].$code.'p2'.$_.'.jpg', $f[0].$f[6].$newc.'p2'.$_.'.jpg';
+    for (1..4) {
+		rename $f[0].$f[6].$code.'m'.$_.'.jpg', $f[0].$f[6].$newc.'m'.$_.'.jpg'
+	}
+	for (1..$dbaa->[$numb][0][3]) {
+		rename $f[0].$f[6].$code.'k'.$_.'.jpg', $f[0].$f[6].$newc.'k'.$_.'.jpg'
+	}
+    $dbaa->[$numb][0][0] = $newc;
+	$dbab->[$total] = $dbaa->[$numb];
+	my @film = @$dbaa;
+    splice @film, $numb, 1;
+    $dbaa = [@film];
+
+    DumpFile($base.$bnumb, $dbaa);
+    DumpFile($base.$file, $dbab);
+	return $dbab, $total
 }
 sub logs {
-    my $pass = '<hr>';
+    my $pass;
     my @chars = split( " ","A B C D E F G H" );
     foreach my $line (1..6) {
+		$pass .= '<p>';
         foreach my $char (@chars) {
             $pass = $pass.'<label><input type="radio" name="P'.$line.'"value="'.$char.'" />'.$char.'</label>' if $line != 6;
             $pass = $pass.'<label><input type="radio" name="P'.$line.'" onclick="subm1()" value="'.$char.'" />'.$char.'</label>' if $line == 6;
         }
-		$pass .= '<hr>';
     }
     my $text = '<div class="center_col">
                 <div id="user">
                 <div id="mess">Enter your password<p></div>
-                <div id="dash"><p/><p/><hr><hr>'.$pass.'<hr><p/></div>
+                <div id="dash"><hr><hr>'.$pass.'<hr></div>
                 </div></div>';
     return $text
 }

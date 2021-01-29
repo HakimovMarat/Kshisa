@@ -5,6 +5,7 @@ use YAML::Any qw(LoadFile DumpFile);
 use LWP;
 use LWP::Simple qw(getstore);
 use Image::Magick;
+use utf8;
 
 extends 'Catalyst::Model';
 =head1 NAME
@@ -67,12 +68,22 @@ sub find {
                 ($text, $rus) = _mine( $resmail, $d[$x][4], $d[$x][5]);
                 $glob{$x.'_'.$y.'_0'} = $text->[$y] if $text->[$y];
                 $glob{$x.'_'.$y.'_1'} = $rus->[$y]  if $rus->[$y];
-                if ($d[$x][3] == 3 and $rus->[$y]) {
+                if ($rus->[$y]) {
                     my $resp = LWP::UserAgent->new->get($d[0][5][3].$text->[$y], 'User-Agent' => $UA);
                     my ($eng)  = _mine($resp, $d[0][5][4]);
                     $glob{$x.'_'.$y.'_2'} = $eng->[0] if $eng->[0];
                     my $z = 0;
                     for (@$pers) {
+                        $_ =~ tr[é][]d;
+                        $eng->[0] =~ tr[&#233;][]d;
+                        $_ =~ tr[è][]d;
+                        $eng->[0] =~ tr[&#232;][]d;
+                        $_ =~ tr[ç][]d;
+                        $eng->[0] =~ tr[&#231;][]d;
+                        $_ =~ tr[í][]d;
+                        $eng->[0] =~ tr[&#237;][]d;
+                        $_ =~ tr[ì][]d;
+                        $eng->[0] =~ tr[&#236;][]d;
                         if ($eng->[0] eq $_) {
                             $glob{$x.'_'.$y.'_3'} = $adr->[$z];
                             last
@@ -203,8 +214,37 @@ sub roles {
             }
         }        
     }
-
     DumpFile($base.$bnumb, $dba);
+
+    my $dba2 = LoadFile('/home/marat/Base/b/4');
+
+    my $z = $numb;
+    for my $x (0..6) {
+        for my $y (0..6) {
+            if (exists $dba->[$z][$x][$y]) {
+                $dba2->[$z][$x][$y] = $dba->[$z][$x][$y]
+            }
+        }
+    }
+    for my $x (7..12) {
+        $dba2->[$z][$x][0] = [];
+        for my $y (0..14) {
+            if (exists $dba->[$z][$x][$y][0]) {
+                $dba2->[$z][$x][$y][0] = $dba->[$z][$x][$y][0];
+                $dba2->[$z][$x][$y][1] = $dba->[$z][$x][$y][1];
+                $dba2->[$z][$x][$y][2] = $dba->[$z][$x][$y][2];
+                if ($dba->[$z][$x][$y][3] ne 'blank' 
+                    and $dba->[$z][$x][$y][3] ne $dba->[$z][$x][$y][0]
+                    and exists $dba->[$z][$x][$y][3] ) {
+                    $dba2->[$z][$x][$y][3] = $dba->[$z][$x][$y][3];
+                }
+            }
+        }
+    }
+    $dba2->[$z][13][0] = $dba->[$z][13][0];
+    $dba2->[$z][13][1] = $dba->[$z][13][1];
+
+    DumpFile('/home/marat/Base/b/4', $dba2);
 }
 =encoding utf8
 =head1 AUTHOR

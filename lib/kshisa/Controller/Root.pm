@@ -26,22 +26,22 @@ sub index :Path :Args(0) {
     my $bnumb = $param->{files} || 8;
     my $numb  = $param->{idr} || 1; 
     my $title = $param->{tit};
-    my $base  = $c->config->{'path'}.'Base/';
+    my $base  = $c->config->{'path'};
     my $dba   = LoadFile($base.$bnumb);
     my $total = $#{$dba};
     $numb  = 1 if $numb > $total;
 
     if ( $c->user_exists() ) {
-        if ($param->{'logout.x'}){   #LOGOUT
+        if ($param->{'logout.x'}){                          # LOGOUT
             $c->logout;
             $c->response->redirect($c->uri_for("/"))
         }        
-        elsif ($param->{Address} ) {  #SEARCH IN NET
-            if ($param->{Address} =~ /^(\d+_.*?)(tt\d+)/) {
+        elsif ($param->{'sch.x'} ) {                        # SEARCH
+            if ($param->{Address} =~ /^(\d+_.*?)(tt\d+)/){
                 $glob = $c->model('Find')->find($base, $1, $2);
                 $title = $glob->{'1_1_0'};
             }
-            elsif ($param->{Address} =~ /^(\d+)$/) {
+            elsif ($param->{Address} =~ /^(\d+)$/){
                 if ($1 <= $total){$numb = $1}
                 else {$numb = $total};
                 $glob = $c->model('Data')->readds($numb, $dba);
@@ -52,7 +52,7 @@ sub index :Path :Args(0) {
                 $glob = $c->model('Data')->readds($numb, $dba);                    
             }
         }
-        elsif ($param->{'find.x'}) {
+        elsif ($param->{'find.x'}){
             foreach my $key (keys %$param) {
                 if ($key =~ /ff(\d+_.*?)ff/) {
                     $addr1 = $1
@@ -64,26 +64,39 @@ sub index :Path :Args(0) {
             ($glob, $text) = $c->model('Find')->find($base, $addr1, $addr2, $title);
         }
         else {
-            if ($param->{'rt.x'}) {
+            if ($param->{'rt.x'}){
 		        if ($numb == $total) { $numb = 1 }
 		        else { $numb = $numb + 1 }
 	        }
-	        elsif ($param->{'lt.x'}) {
+	        elsif ($param->{'lt.x'}){
                 if ($numb == 1) { $numb = $total }
 		        else { $numb = $numb - 1 }
 	        }
-            elsif ($param->{'insert.x'}) {
+            elsif ($param->{'insert.x'}){
                 ($numb, $dba) = $c->model('Data')->insert($base, $param, $bnumb);
                 ++$total;
             }
-            elsif ($param->{'del.x'}) {
-                $text = 'Are you sure? <button name="delete">delete</button>'
+            elsif ($param->{'del.x'}){
+                my $f = 0;
+                foreach my $key (keys %$param) {
+                    if ($key =~ /kad\d+/) {
+                        $text = 'Are you sure delete this pictures?  <button name="delpics">delpics</button>';
+                        $f = 1;
+                        last
+                    }
+                }
+                if ( $f == 0 ) {
+                    $text = 'Are you sure?  <button name="delete">delete</button>'
+               }
             }
-            elsif ($param->{'send.x'}) {
-                ($bnumb, $numb) = $c->model('Data')->send
-                ($base, $param->{idb}, $param->{files}, $numb, $param->{numb})
+            elsif ($param->{'send.x'}){
+                ($dba, $numb) = $c->model('Data')->send($base, $bnumb, $numb, $param->{Address});
+
             }
-            foreach my $key (keys %$param) {
+            elsif ($param->{'post.x'}){
+                $kadr = $dba->[$numb][0][0]
+            }
+            foreach my $key (keys %$param){
                 if ($key =~ /^bb(\d+)_(\d+)_(\d+)_(\d)$/) {
                     $dba = $c->model('Data')->update($base, $bnumb, $numb, 
                                                      $1, $2, $3, $4, $param->{$1.'_'.$2.'_'.$3})
@@ -92,7 +105,10 @@ sub index :Path :Args(0) {
                     $c->model('View')->change($numb, $base, $bnumb)
                 }
                 elsif ($key eq 'delete') {
-                    $c->model('Data')->delete($base, $bnumb, $numb)
+                    $dba = $c->model('Data')->delete($base, $bnumb, $numb)
+                }
+                elsif ($key eq 'delpics') {
+                    $dba = $c->model('Data')->delpics($base, $bnumb, $numb, $param)
                 }
                 elsif ($key eq 'roles') {
                     $c->model('Find')->roles($base, $bnumb, $numb, $param->{'0_2_0'});
@@ -123,7 +139,7 @@ sub index :Path :Args(0) {
             $glob = $c->model('Data')->readds($numb, $dba);
         }    
         $root = $c->model('View')->view
-        ($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title);
+        ($numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title, $param);
     }   
     elsif ($param->{'P6'}) {                                               # PASSWORD VERIFICATION
         my $pass;
