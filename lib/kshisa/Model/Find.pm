@@ -216,35 +216,41 @@ sub roles {
     }
     DumpFile($base.$bnumb, $dba);
 
-    my $dba2 = LoadFile('/home/marat/Base/b/4');
-
+    my $dba2 = LoadFile('/home/marat/Base/b/9');
+    my $next = $#{$dba2} + 1;
     my $z = $numb;
     for my $x (0..6) {
         for my $y (0..6) {
             if (exists $dba->[$z][$x][$y]) {
-                $dba2->[$z][$x][$y] = $dba->[$z][$x][$y]
+                $dba2->[$next][$x][$y] = $dba->[$z][$x][$y]
             }
         }
     }
     for my $x (7..12) {
-        $dba2->[$z][$x][0] = [];
+        $dba2->[$next][$x][0] = [];
         for my $y (0..14) {
             if (exists $dba->[$z][$x][$y][0]) {
-                $dba2->[$z][$x][$y][0] = $dba->[$z][$x][$y][0];
-                $dba2->[$z][$x][$y][1] = $dba->[$z][$x][$y][1];
-                $dba2->[$z][$x][$y][2] = $dba->[$z][$x][$y][2];
+                $dba2->[$next][$x][$y][0] = $dba->[$z][$x][$y][0];
+                $dba2->[$next][$x][$y][1] = $dba->[$z][$x][$y][1];
+                $dba2->[$next][$x][$y][2] = $dba->[$z][$x][$y][2];
                 if ($dba->[$z][$x][$y][3] ne 'blank' 
                     and $dba->[$z][$x][$y][3] ne $dba->[$z][$x][$y][0]
                     and exists $dba->[$z][$x][$y][3] ) {
-                    $dba2->[$z][$x][$y][3] = $dba->[$z][$x][$y][3];
+                    $dba2->[$next][$x][$y][3] = $dba->[$z][$x][$y][3];
                 }
             }
         }
     }
-    $dba2->[$z][13][0] = $dba->[$z][13][0];
-    $dba2->[$z][13][1] = $dba->[$z][13][1];
-
-    DumpFile('/home/marat/Base/b/4', $dba2);
+    $dba2->[$next][13][0] = $dba->[$z][13][0];
+    $dba2->[$next][13][1] = $dba->[$z][13][1];
+    my @film = @$dba2;
+    @film = sort {                                                      # SORT BY YEAR AND REIT
+        $a->[3][0] cmp $b->[3][0]
+        ||
+        $b->[2][0] cmp $a->[2][0]
+    } @film;
+    $dba2 = [@film];
+    DumpFile('/home/marat/Base/b/9', $dba2);
 }
 =encoding utf8
 =head1 AUTHOR

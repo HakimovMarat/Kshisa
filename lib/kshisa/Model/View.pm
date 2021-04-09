@@ -31,7 +31,7 @@ it under the same terms as Perl itself.
 
 sub view {
     my ($self, $numb, $bnumb, $base, $dba, $glob, $kadr, $find, $mail, $imdb, $title, $param) = @_;
-    my (@d, @t, @s, @o, @f, @i, $crew, $rigtp, $size, $nav, $navex);
+    my (@d, @t, @s, @o, @f, @i, $crew, $rigtp, $size, $nav, $navex, $cntr);
     my $snip  = LoadFile($base.0);
     if ($bnumb == 1 or $bnumb == 2 or $bnumb == 3) {
         $size = $#{$snip->[3]};
@@ -50,13 +50,14 @@ sub view {
     push @o, $snip->[0][2][$_] for 0..12;
     push @t, $snip->[0][3][$_] for 0..14;
 
-    my $panl = $i[1].'hidden'.$i[4].'idr'.$i[16].$numb.$i[14].
+    my $hidd = $i[1].'hidden'.$i[4].'idr'.$i[16].$numb.$i[14].
                $i[1].'hidden'.$i[4].'idb'.$i[16].$bnumb.$i[14].
-               $i[1].'hidden'.$i[4].'tit'.$i[16].$title.$i[14].
-               $i[13].'Logo'.$i[14].
+               $i[1].'hidden'.$i[4].'tit'.$i[16].$title.$i[14];
+               
+    my $panl = $i[13].'Logo'.$i[14].
                $i[1].'image'.$i[3].'logo'.$i[4].'logout'.$i[5].$f[3].'kshisa'.$i[7].
                $i[15];
-    $panl .= $i[13].'panl'.$i[14].$o[4].'files" id="addr" onchange="subm1()"/>';            
+    $panl .= $o[4].'files" id="addr" onchange="subm1()"/>';            
     for (1..$#{$snip->[1]}) {
         if ($snip->[1][$_][0]) {
 	        $panl .= $o[6].$_.'"';
@@ -71,17 +72,18 @@ sub view {
         if ($mail->[0]) {
             $panl .= $i[13].'tit'.$i[14].$title.$i[15];
             $panl .= $i[0].$i[1].'image'.$i[3].'search'.$i[4].'find'.$i[5].$f[3].'chek'.$i[7].
-                     $i[8].'go'.$i[10].$i[11];
+                     $i[8].'go...go...go'.$i[10].$i[11];
         }
         else {
             $panl .= $i[1].'text'.$i[3].'address'.$i[4].'Address" size="34'.$i[14];
-            $panl .= $i[1].'image'.$i[3].'search'.$i[4].'sch'.$i[5].$f[3].'rt'.$i[7].$i[8].$i[10];            
+            $panl .= $i[0].$i[1].'image'.$i[3].'search'.$i[4].'sch'.$i[5].$f[3].'rt'.$i[7].
+                     $i[8].'go...go...go'.$i[10].$i[11];        
         }
     }        
     else {
         $panl .= $i[13].'tit'.$i[14].$title.$i[15];
         $panl .= $i[0].$i[1].'image'.$i[3].'search'.$i[4].'insert'.$i[5].$f[3].'chek'.$i[7].
-                 $i[8].'go'.$i[10].$i[11];;
+                 $i[8].'go...go...go'.$i[10].$i[11];
     }        
     $panl .= $i[13].'Clock'.$i[14]. # Clock
              $i[13].'timer'.$i[14].
@@ -91,31 +93,16 @@ sub view {
              $i[13].'Date' .$i[14].$i[15].
              $i[15];
     $panl .= '<div id="weather">
-              <a target="_blank" href="http://nochi.com/weather/kazan-4422"><img style="height:50px;" 
+              <a target="_blank" href="http://nochi.com/weather/kazan-4422"><img style="height:50px; width:138px;" 
               src="https://w.bookcdn.com/weather/picture/1_4422_1_20_babec2_320_ffffff_333333_08488D_1_ffffff_333333_0_6.png?scode=124&domid=589&anc_id=35927"  
-              alt="booked.net"/></a>'.$i[15].$i[15];
-    my ($year, $month, $day, $hour);
+              alt="booked.net"/></a>'.$i[15];
+    
+    my ($year, $month, $day, $hour, $select, $area);                               # DATE FROM BASE
     my $form = $s[0].$s[1].$glob{'0_0_0'}.$s[8].$s[9].$s[0].$s[1];
     if ( $glob{'0_0_0'} =~ /^\df(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/ ) {
         $form .= $3.'.'.$2.'.20'.$1.'   '.$4.'::'.$5.'::'.$6.$s[8].$s[9];
     }
-    my ($a, $b) = ($1, $2) if $d[0][2] =~ /^(\d+)_(\d+)$/;
-    for my $y (1..$a) {
-        if ($y == 3 && $code) {
-            $form .= $s[0].$s[1].$s[2].
-                'bb'.'0_'.$y.'_0_5'.
-                $s[3].'images'.
-                $s[4].$s[5].'0_'.$y.'_0'.$s[6].
-                $glob{'0_'.$y.'_0'}.$s[7].$s[8].$s[9];            
-        }
-        else {
-            $form .= $s[0].$s[1].$i[15].$s[5].'0_'.$y.'_0'.$s[6].
-                 $glob{'0_'.$y.'_0'}.$s[7].$s[8].$s[9];            
-        }
-    }
-    my $select;
-    my $area;
-    for my $x (1..$size) {
+    for my $x (0..$size) {
         my $flag = 0;
         ($a, $b) = ($1, $2) if $d[$x][2] =~ /^(\d+)_(\d+)$/;
         for my $y (0..$a) {
@@ -126,8 +113,7 @@ sub view {
                         $t[3].$d[$x][0].' ('.($y+1).')'.
                         $t[4].$t[8].$t[9].$t[0].$t[1].$t[5].
                         $x.'_'.$y.'_'.$z.$t[6].
-                        $glob{$x.'_'.$y.'_'.$z}.
-                        $t[7].$t[8].$t[9];
+                        $glob{$x.'_'.$y.'_'.$z}.$t[7].$t[8].$t[9];
                     }
                     else {               
                         $form .= $s[0].$s[1].$i[12].'label1'.$i[14].$d[$x][0];
@@ -138,11 +124,18 @@ sub view {
                 }
                 else {              
                     if ($d[$x][1] == 1) {
-                        $form .= $s[0].$s[1].$s[2].
-                        'bb'.$x.'_'.$y.'_'.$z.'_0'.$s[3].$d[$x][0];
-                        $form .= '  ('.($y+1).')' if $a != 0;
+                        $form .= $s[0].$s[1].$s[2];
+                        if ($x == 0 && $y == 3) {
+                            $form .= 'bb'.$x.'_'.$y.'_'.$z.'_5'.
+                                      $s[3].'images';
+                        }
+                        else {
+                            $form .= 'bb'.$x.'_'.$y.'_'.$z.'_0'.
+                                      $s[3].$d[$x][0];
+                            $form .= '  ('.($y+1).')' if $a != 0;          
+                        }
                         $form .= $s[4].$s[5].$x.'_'.$y.'_'.$z.$s[6].
-                        $glob{$x.'_'.$y.'_'.$z}.$s[7].$s[8].$s[9];
+                                 $glob{$x.'_'.$y.'_'.$z}.$s[7].$s[8].$s[9];
                     }
                     elsif ($d[$x][1] == 2) {
                         my $dset = LoadFile($base.2);
@@ -191,7 +184,7 @@ sub view {
                                 $form .= $s[0].$s[1].$s[2].'bb'.$x.'_'.$y.'_'.$z.'_1'.
                                          $s[3].$d[$x][0].' ('.($y+1).')'.$s[4].$s[5].
                                          $x.'_'.$y.'_'.$z.$s[6].$s[7];
-                                $form .= $t[2].'roles'.$t[3].'roles'.$t[4] if $x == 7;
+
                                 $form .= $s[8].$s[8].$s[9]
                             }
                             $flag = 1;
@@ -212,7 +205,7 @@ sub view {
     my $pics = $i[13].'pics'.$i[14];
     my ($pic, $next, $name, $path, $old);
     if ($code && $snip->[1][$bnumb][1] == 0) {
-        for my $x (7..12) {
+        for my $x (7..12) {                           # PORTRETS OF CAST
             my $flag = 0;
             if ( $d[$x][2] =~ /^(\d+)_(\d+)$/ ) {
                 ($a, $b) = ($1, $2);
@@ -240,8 +233,8 @@ sub view {
                 }
             }
         }
-        $form = $i[13].'data'.$i[14].$i[13].'text'.$i[14].$t[10].$form.$select.$area.
-                $t[11].$i[15].$i[13].'pers'.$i[14].$crew.$i[15].$i[15];
+        $form = $t[10].$form.$select.$area.$t[11];
+
         if ($find->[0]) {
             $pics .= $i[20];
             for (0..$#{$find}) {
@@ -331,33 +324,40 @@ sub view {
             $pics .= $i[15];      
         }
         $pics .= $i[15].$i[13].'imgsf'.$i[14];
-
-        $pics .= $i[13].'imgsk'.$i[14]; # KADS
-            for (1..$dba->[$numb][0][3]) {
-                my $image = Image::Magick->new;
-	            $image->Read($f[0].$f[6].$code.'k'.$_.'.jpg');
-                my ($w, $h) = $image->Get('width', 'height');
-                $pics .= $i[12].'dims'.$i[14].
-                         $i[1].'checkbox'.
-                         $i[2].'chek'.
-                         $i[4].'kad'.$_;
-                if ($param->{'kad'.$_}) {
-                    $pics .= '" checked="checked'
-                }
-                $pics .= $i[14].
-                         '('.$_.') '.$w.'x'.$h.
-                         $i[1].'image'.
-                         $i[2].'kads'.
-                         $i[4].'kk'.$_.
-                         $i[5].$f[6].$code.'k'.$_.$i[6].
-                         $i[15];
+        for (1..$dba->[$numb][0][3]) {
+            my $image = Image::Magick->new;
+            $image->Read($f[0].$f[6].$code.'k'.$_.'.jpg');
+            my ($w, $h) = $image->Get('width', 'height');
+            $pics .= $i[12].'dims'.$i[14].
+                     $i[1].'checkbox'.
+                     $i[2].'chek'.
+                     $i[4].'kad'.$_;
+            if ($param->{'kad'.$_}) {
+                $pics .= '" checked="checked'
+            }
+            $pics .= $i[14].
+                    '('.$_.') '.$w.'x'.$h.
+                      $i[1].'image'.
+                      $i[2].'kads'.
+                      $i[4].'kk'.$_.
+                      $i[5].$f[6].$code.'k'.$_.$i[6].
+                      $i[15];
             }            
-        $pics .= '<hr>'.$i[15].$i[13].'imgsf'.$i[14].$i[15].$i[15].$i[15];
+        $pics .= '<hr>'.$i[15].$i[15];
         for ('del', 'send') {
              $navex .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
         }
+        for ('lt', 'rt') {
+            $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
+        }
+        $cntr = $i[13].'nav'.$i[14].$navex.$i[15].
+            $i[13].'tot'.$i[14].$#{$dba}.$i[15].
+            '<button name="roles" 
+            style="width:8%; height:10%; margin-top:14px;">roles</button>'.              
+            $i[13].'nav'.$i[14].$nav.$i[15];
+ 
     }
-    elsif ($snip->[1][$bnumb][1] == 1) {
+    elsif ($snip->[1][$bnumb][1] == 1) {                            # PEOPLE MODE
         $form = $i[13].'data'.$i[14].$t[10].$form.$t[11].$i[15];
         my $maps = '';
         my $post = 'blank';
@@ -392,7 +392,7 @@ sub view {
                     }
                 }
                 if (length($prof) > 0) {
-                    $pers .= $i[0].$i[1].'image'.$i[2].'image'.
+                    $pers .= $i[0].$i[1].'image'.
                          $i[4].$file->[$x][0][0].
                          $i[5].$f[6].$file->[$x][0][0].'p2'.$i[6].
                          $i[8].$file->[$x][1][0].'('.$file->[$x][3][0].')'.
@@ -402,7 +402,7 @@ sub view {
         }
         $pics .= $i[13].'imgsf'.$i[14].$pers.$i[15].$i[15];   
     }
-    else {
+    else {                                                                 # FIND MODE
         $form = $i[13].'data'.$i[14].$t[10].$form.$t[11].$i[15];
         for (1..$glob{'0_3_0'}) {
             $pics .= $i[12].'dims'.$i[14].
@@ -411,8 +411,7 @@ sub view {
                       $i[5].$f[4].$_.$i[6].$i[15];
         } 
     }
-    $pics .= $i[15];
-    if ($#{$dba} > 15) {
+    if ($code && $#{$dba} > 15) {
         my $x = 0;
         for (1..15) {
             if ($numb >= 15) {
@@ -451,14 +450,17 @@ sub view {
                       $i[8].$name.$i[10].$i[11]
 	    }
     }
-    for ('lt', 'rt') {
-        $nav .= $i[0].$i[1].'image'.$i[2].'del'.$i[4].$_.$i[5].$f[3].$_.$i[7].$i[11]
-    }
-    return $panl.$form.$pics.$i[13].'rcol'.$i[14].
-           $i[13].'nav'.$i[14].$navex.$i[15].
-           $i[13].'total'.$i[14].$#{$dba}.$i[15].
-           $i[13].'nav'.$i[14].$nav.$i[15].
-           $i[13].'rigt'.$i[14].$rigtp.$i[15].$i[15]
+    my $root = $hidd.
+               $i[12].'row'.$i[14].$cntr.$i[15].
+               $i[12].'row'.$i[14].$panl.$i[15].
+               $i[12].'row'.$i[14].
+               $i[12].'col-1'.$i[14].$i[13].'pers'.$i[14].$crew.$i[15].$i[15].
+               $i[12].'col-3'.$i[14].$form.$i[15].
+               $i[12].'col-7'.$i[14].$pics.$i[15].
+               $i[12].'col-1'.$i[14].$rigtp.$i[15].
+               $i[15];
+
+    return $root
 }
 sub mini {
     my ($self, $numb, $param, $base, $basenumb, $mini, $geometry) = @_;

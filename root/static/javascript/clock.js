@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]; 
+    [ "January", "February", "March", "april", "May", "June", "July", "August", "September", "October", "November", "December" ]; 
     var dayNames= ["Sun","Mon","Tue","Wen","Thu","Fri","Sut"]
     
     var h = $("#hours").text();

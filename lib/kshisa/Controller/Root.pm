@@ -23,12 +23,13 @@ sub index :Path :Args(0) {
     my ($find, $logs, $text, $root, $glob, $mail, $imdb, $addr1, $addr2);
     my $param = $c->req->body_params;    
     my $kadr = 6;                       #PATH TO IMAGES
-    my $bnumb = $param->{files} || 8;
-    my $numb  = $param->{idr} || 1; 
-    my $title = $param->{tit};
     my $base  = $c->config->{'path'};
+    my $bnumb = $param->{files} || 8;
     my $dba   = LoadFile($base.$bnumb);
-    my $total = $#{$dba};
+    my $total = $#{$dba};    
+    my $numb  = $param->{idr} || $total; 
+    my $title = $param->{tit};
+    
     $numb  = 1 if $numb > $total;
 
     if ( $c->user_exists() ) {

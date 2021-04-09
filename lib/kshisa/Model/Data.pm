@@ -21,6 +21,23 @@ Marat Haa Kim
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 =cut
+sub _mine {
+    my ($resp, $reg1, $reg2) = @_;
+    my (@text, @rus, @str, @pers);
+    for ($resp->decoded_content) {
+        while ( $_ =~ m{$reg1}mg) {
+            push @str, $1;
+            push @pers, $2 if $2;
+            if ($reg2) {
+                while ( $str[0] =~ m{$reg2}mg) {
+                    push @text, $1;
+                    push @rus, $2 if $2;
+                }
+            }
+        }
+    }    
+    return $reg2 ? (\@text, \@rus): (\@str, \@pers);
+}
 
 sub readds {
     my ($self, $numb, $dba) = @_;
@@ -49,7 +66,7 @@ sub readds {
 }
 sub insert {
 	my ($self, $base, $param, $bnumb) = @_;
-    my ($numb, $time, $timea, @d, @s, @o, @t, @i, @f, @time);
+    my ($timea, @d, @s, @o, @t, @i, @f, @time, @roles, @actors, $flag);
 	my $shem = LoadFile($base.0);
     my $dba  = LoadFile($base.$bnumb);
 	my $dba1 = LoadFile($base.'1');	
@@ -57,11 +74,31 @@ sub insert {
     my $size = $#{$shem->[2]};
 	push @d, $shem->[2][$_]  for 0..$size;
 	my $name = $#{$dba1}+1;
-    $numb = ++$#{$dba};
-	
-	($time[0], $time[1], $time[2], $time[3], $time[4], $time[5]) = localtime();
+    my $numb = ++$#{$dba};
+	my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
+    
+	my $resimdb = LWP::UserAgent->new->get($d[0][4][0].$param->{'0_2_0'}.$d[0][4][7], 'User-Agent' => $UA); #roles
+    my ($text) = _mine($resimdb, $d[0][4][13]);    
+    my ($adr, $pers) = _mine($resimdb, $d[0][4][8]);
+    my $first = $param->{'8_0_2'};
+	for (@$text) {
+        if ($_ =~ m{<a.*?>(.*?)</a>}mg) { push @roles, $1 }
+        else { push @roles, $_ }
+    }
+    for (@$pers) {
+        if ($_ eq $first && $flag != 1) {
+           push @actors, $_;
+           $flag = 1;
+        }
+        elsif ($flag == 1) {
+            push @actors, $_;
+        }
+    }
+
+	($time[0], $time[1], $time[2], $time[3], $time[4], $time[5]) = localtime(); # code
     for (0..4) { $time[$_] = "0".$time[$_] if $time[$_] < 10}
-    $time = $bnumb.'f'.($time[5]-100).++$time[4].$time[3].$time[2].$time[1].$time[0];
+    my $time = $bnumb.'f'.($time[5]-100).++$time[4].$time[3].$time[2].$time[1].$time[0];
+
 	$dba->[$numb][0][0] = $time;
     $dba->[$numb][0][1] = $param->{'0_1_0'};
 	$dba->[$numb][0][2] = $param->{'0_2_0'};
@@ -100,10 +137,10 @@ sub insert {
 				}
 			}
 		}
-		if ($d[$i][3] == 3) {
+		if ($d[$i][3] == 3) { #persons
             for my $p (0..$a) {
 				if ( length($param->{$i.'_'.$p.'_2'}) > 0) {
-					my $flag = 0;
+					$flag = 0;
                     for (1..$#{$dba1}) {
                         if ($param->{$i.'_'.$p.'_2'} eq $dba1->[$_][1][1]) {
 							$dba->[$numb][$i][$p][0] = $dba1->[$_][0][0];
@@ -126,7 +163,6 @@ sub insert {
 						$dba1->[$name][1][0] = $param->{$i.'_'.$p.'_1'};
 						$dba1->[$name][1][1] = $param->{$i.'_'.$p.'_2'};
 						$dba1->[$name][2][0] = 0;
-						my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
                         my $response = LWP::UserAgent->new->get('https://www.imdb.com/name/'.
 		                                $param->{$i.'_'.$p.'_3'}, 'User-Agent' => $UA);
 						for my $y ($response->decoded_content) {
@@ -143,6 +179,13 @@ sub insert {
 						$name = $name + 1;	
 						sleep 1;
                     }
+					if ($i == 8) {
+                        for my $y (0..$#roles) {
+                            if ($dba->[$numb][$i][$p][2] eq $actors[$y]) {
+                                $dba->[$numb][$i][$p][3] = $roles[$y];
+                            }
+                        }
+					}
 				}
 			}
 		}
@@ -169,7 +212,7 @@ sub insert {
 			push @four, $_;
 		}
 	}
-	my (@rest, $flag);
+	my (@rest);
     for my $y (1..$dba->[$numb][0][3]) {
 		for my $z (@four) {
             if ($y == $z) {
