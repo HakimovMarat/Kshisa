@@ -1,35 +1,34 @@
 body{
-    text-align: left;
-    height: 100%;
-    width: 1280px; 
-    margin-left: auto;
-    margin-right: auto;
+    background: url(/images/0/scene.jpg);
 }
-#Logo {
-    height: 50px;
-    width: 125px;
-    margin: 4px 14px 1px 15px;
-    border-radius: 5px;
+.Logo {
+    height: 30px;
+    width: 102px;
+    margin: 15px 8px 3px 0px;
     border: 1px solid black;
     background: #819abb;
 }
+#logo {
+    float: left;
+    width: 100px;
+}
 #addr{
-    width:  90px;
-    height: 41px;
-    margin: 10px 1px 1px 1px;
+    width:  10%;
+    height: 43px;
+    margin: 10px 1px 1px 15px;
 }
 #address {
     margin: 10px 1px 7px 1px;
     padding: 1px 1px 1px 10px;
     font-size: 1.4em;
-    width: 55%;
+    width: 47%;
 }
 #search {
     margin: 10px 5px 1px 1px;
 }
 #user{
-    background: url(/images/butt/back2.png) no-repeat;
-    background-position: 66%;
+    background: url(/images/0/back2.png) no-repeat;
+    background-position: 100%;
     padding-top: 10px;
     height: 700px;
     text-align: center;
@@ -40,7 +39,7 @@ body{
     top: 20px;
 }
 #dash{ 
-    background: url(/images/butt/TV.png) no-repeat;
+    background: url(/images/0/TV.png) no-repeat;
     position: relative; 
     top: 254px;
     left: 14px;
@@ -57,19 +56,11 @@ label {
 }
 .numb{
     text-align: center;
-    font-size: 20px;
-    line-height: 25px;
+    font-size: 25px;
     padding: 5px 10px;
     border-radius: 5px;
     vertical-align: middle;
-    margin: 2px;
-    color: #000;
     border: 1px solid #d6e900;
-    background:#c7ecef;
-}
-#logo {
-    float: left;
-    width: 125px;
 }
 #tit{
     float: left;
@@ -79,16 +70,16 @@ label {
 }
 #Clock { 
     height: 50px;
-    width: 125px;
+    width: 9%;
     margin: 4px 1px 1px 1px;
-    border: 1px solid black;
+    border: 1px solid #d6e900;;
     padding: 1px 1px 1px 6px;
     border-radius: 5px;
 }
 #Date { 
     font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
     font-size: 12px;
-    margin: 0 23%;
+    margin: 0 21%;
     text-shadow: 0 0 5px gray; 
     float: left;
 }
@@ -118,11 +109,6 @@ label {
 #weather {
     margin: 5px 1px 1px 1px;
 }
-/*
-#nav {
-    margin: 0 236px;
-}
-*/
 #tot{
     font-size: 20px;
     line-height: 25px;
@@ -154,10 +140,10 @@ label {
     margin-bottom: 6px;
 }
 #pers {
-    margin-top: 383%;
+    margin-top: 101%;
 }
 .port {
-    width: 74px;
+    width: 69px;
     margin-left: 10px;
 }
 .post {
@@ -169,9 +155,9 @@ label {
 #imgs {
     float: left;
     width: 743px;
-    height: 345px;
-    background: url(/images/bill/TV01.jpg) no-repeat;
-    background-size: 74% 108%;
+    height: 300px;
+    background: url(/images/0/TV01.png) no-repeat;
+    background-size: 74% 100%;
 }
 #shot {
     float: left;
@@ -182,7 +168,7 @@ label {
 }
 .bill {
     float: left;
-    margin: 15px;
+    margin: 5px;
     width: 20%;
     height: 40%;
 }
@@ -201,6 +187,12 @@ label {
     width: 100%;
     font-size: 13px;
 }
+#images {
+    width: 10%;
+}
+#img {
+    margin-right: 20%;
+}
 #imgsk {
     float: left;
     height: 100%;
@@ -215,10 +207,8 @@ label {
     margin: 18px;
 }
 #post{
-    width: 161px;
-    margin-left: 7px;
-    margin-top: 18px;
-    margin-bottom: -2px;
+    padding-left: 6px;
+    margin-top: 14px;
 }
 .kadr{
     margin: 2px;
@@ -228,7 +218,7 @@ label {
     float: left;
 }
 .image{
-    width: 76px;
+    width: 100%;
 }
 #rcol{
     float: left;
@@ -266,10 +256,14 @@ a.tip:hover span {
     position: absolute;
     text-decoration: none
 }
+#reit {
+    width: 10%;
+    float: left;
+}
 #imdb {
-    font-size: 30px;
-    color: #ff2500;
-    font-style: italic;
+    float: left;
+    width: 94%;
+    margin-left: 3%;
 }
 .chek {
     zoom: 2;

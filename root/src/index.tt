@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
     <link rel="stylesheet" href="/static/css/cms.css" />
     <link rel="stylesheet" href="/static/css/star-rating-svg.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -11,8 +12,29 @@
   <body>
     <div class="container-fluid">
       <form method="post" id="pass" action="/">
-        [% text  %]
-        [% root  %]
+        [% text %]
+        <div class="row">[% panl %]</div>
+        <div class="row">
+        <div class="col-sm-1">
+        <div class="Logo">
+            <input type="image" id="logo" src="/images/0/kshisa.png"/>
+        </div>
+        <div class="Logo">
+            <a href="http://ec2-54-219-99-181.us-west-1.compute.amazonaws.com/">
+                <img id="logo" src="/images/0/logo1.png"/>
+            </a>
+        </div>
+        <div id="weather">
+            <a target="_blank" href="http://nochi.com/weather/kazan-4422"><img style="height:37px; width:103px; margin-top:10px;" 
+            src="https://w.bookcdn.com/weather/picture/1_4422_1_20_babec2_320_ffffff_333333_08488D_1_ffffff_333333_0_6.png?scode=124&domid=589&anc_id=35927"  
+            alt="booked.net"/></a>
+        </div>
+        <div id="pers">[% crew %]</div>
+        </div>
+        <div class="col-3">[% form %]</div>
+        <div class="col-7">[% pics %]</div>
+        <div class="col-1">[% rigt %]</div>
+        </div>
       </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

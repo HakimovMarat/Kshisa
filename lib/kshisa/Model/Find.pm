@@ -18,11 +18,11 @@ sub _mine {
     my ($resp, $reg1, $reg2) = @_;
     my (@text, @rus, @str, @pers);
     for ($resp->decoded_content) {
-        while ( $_ =~ m{$reg1}mg) {
+        while ( $_ =~ m{$reg1}mgs) {
             push @str, $1;
             push @pers, $2 if $2;
             if ($reg2) {
-                while ( $str[0] =~ m{$reg2}mg) {
+                while ( $str[0] =~ m{$reg2}mgs) {
                     push @text, $1;
                     push @rus, $2 if $2;
                 }
@@ -33,37 +33,46 @@ sub _mine {
 }
 
 sub find {
-    my ($self, $base, $mail, $imdb) = @_;
-    my (@d, %glob, $pics, $text, $rus, $form);
+    my ($self, $base, $mail, $imdb, $home) = @_;
+    my (@d, @f, @n, %glob, $pics, $text, $rus, $form);
     $glob{'0_1_0'} = $mail;
     $glob{'0_2_0'} = $imdb;
     my $snip  = LoadFile($base.0);
-    my $size = $#{$snip->[2]};
-    push @d, $snip->[2][$_]    for 0..$size;
+    push @d, $snip->[2][$_]  for 0..$#{$snip->[2]};
+    push @n, $snip->[5][$_]  for 0..$#{$snip->[5]};
 
     my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
     my $resmail = LWP::UserAgent->new->get($d[0][5][1].$mail, 'User-Agent' => $UA); 
-    my $resimdb = LWP::UserAgent->new->get($d[0][4][0].$imdb, 'User-Agent' => $UA);        
+    my $resimdb;        
     my $respers = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][7], 'User-Agent' => $UA);
     my $resfoto = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][1], 'User-Agent' => $UA);
     my ($adr, $pers) = _mine($respers, $d[0][4][8]);
     my ($fst, $kadr) = _mine($resfoto, $d[0][4][3]);
-    for my $x (1..$size) {
+    for my $x (1..$#{$snip->[2]}) {
         my ($a, $b);
         if ( ($d[$x][2] =~ /^(\d+)_(\d+)$/)) {
             ($a, $b) = ($1, $2);
         }
-        if ($d[$x][3] == 1) {
-            ($text) = _mine($resimdb, $d[$x][4]);
-            $glob{$x.'_0_0'} = $text->[0];
+        if  ($d[$x][1] == 1) {
+            my $reit;
+            while (1) {
+                if ($reit->[0]) {
+                    $glob{$x.'_0_0'} = $reit->[0];
+                    last
+                }
+                else {
+                    $resimdb = LWP::UserAgent->new->get($d[0][4][0].$imdb, 'User-Agent' => $UA);
+                    ($reit) = _mine( $resimdb, $d[$x][4]);
+                }
+            }
         }
-        elsif ($d[$x][3] == 2) {
+        elsif ($d[$x][1] == 2) {
             for my $y (0..$a) {
                 ($text) = _mine( $resmail, $d[$x][4], $d[$x][5]);
                 $glob{$x.'_'.$y.'_0'} = $text->[$y] if $text->[$y];
             }
         }
-        elsif ($d[$x][3] == 3) {
+        elsif ($d[$x][1] == 3) {
             for my $y (0..$a) {
                 ($text, $rus) = _mine( $resmail, $d[$x][4], $d[$x][5]);
                 $glob{$x.'_'.$y.'_0'} = $text->[$y] if $text->[$y];
@@ -96,17 +105,15 @@ sub find {
                 }                              
             }                
         }
-        elsif ($d[$x][3] == 4) {
+        elsif ($d[$x][1] == 4) {
             ($text) = _mine( $resmail, $d[$x][4], $d[$x][5]);
             $glob{$x.'_0_0'} = $text->[0];
-            ($text) = _mine($resimdb, $d[0][5][7]);
+            ($text) = _mine( $resimdb, $d[$x][8]);
             $glob{$x.'_1_0'} = $text->[0]; 
         }
     }
-    my $path = $snip->[4][0].$snip->[4][4];
-    my $temp = $snip->[4][0].$snip->[4][7];
-    unlink glob "$path*.*";
-    unlink glob "$temp*.*";
+    my $path = $home.$n[0];
+
     ($text) = _mine($resimdb, $d[0][4][9]);
     getstore($text->[0], $path.'0.jpg');
     my $x = 0;
@@ -124,28 +131,32 @@ sub find {
         $image->Read($path.$_.'.jpg');
         $image->Set(Gravity => 'Center');
         $image->Resize(geometry => '350x240');
-        $image->Write($temp.$_.'.jpg');
+        $image->Write($path.$_.'.jpg');
     }
     return \%glob
 }
 
 sub base {
-    my ($self, $dba, $find, $base) = @_;
-    my (@d);
+    my ($self, $dba, $find, $base, $home) = @_;
+    my (@d, @n, @find, @mail, @imdb);
     my $snip  = LoadFile($base.0);
-    my $size = $#{$snip->[2]};
-    push @d, $snip->[2][$_]    for 0..$size;    
-    my (@find, @mail, @imdb);
-	for my $x (1..$#{$dba}) {
-	    if (uc $dba->[$x][1][0] =~ m{.*?$find.*?}img or 
-            uc $dba->[$x][1][1] =~ m{.*?$find.*?}img) {
-            push @find, $x;
-	    }
+    push @d, $snip->[2][$_]  for 0..$#{$snip->[2]};
+    push @n, $snip->[5][$_]  for 0..$#{$snip->[5]};
+    my $path = $home.$n[0];
+    my @files = (7..11);
+	for my $n (@files) {
+        my $file = LoadFile($base.$n);
+	    for my $x (1..$#{$file}) {
+	        if (uc $file->[$x][1][0] =~ m{.*?$find.*?}img or 
+                uc $file->[$x][1][1] =~ m{.*?$find.*?}img) {
+                push @find,[ $x.'f'.$file->[$x][0][0], $file->[$x][1][0]];
+	        }
+        }
 	}
     my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
     my $resmail = LWP::UserAgent->new->get($d[0][5][0].$find, 'User-Agent' => $UA);
-    my $path = $snip->[4][0].$snip->[4][4];
-    unlink glob "$path*.*";
+
+    #unlink glob "$path*.*";
     my ($fst, $kadr) = _mine($resmail, $d[0][5][2]);
     my $x = 0;
     for (@$fst) {
@@ -173,52 +184,32 @@ sub base {
     return \@find, \@mail, \@imdb, $kadr
 }
 sub roles {
-    my ($self, $base, $bnumb, $numb, $imdb) = @_;
-    my (@d, $text, %actors);
-    my $snip  = LoadFile($base.0);
+    my ($self, $base, $bnumb, $numb) = @_;
+    my (@d);
+    my $snip = LoadFile($base.0);
+    my $dba  = LoadFile($base.$bnumb);
+    my $dba2 = LoadFile('/home/marat/Base/b/10');
+
     my $size = $#{$snip->[2]};
     push @d, $snip->[2][$_] for 0..$size;
-    my $dba  = LoadFile($base.$bnumb);
-
     my $UA = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:44.0) Gecko/20100101 Firefox/44.0';
+
+ for my $z ($numb..$numb+100) {
+    my $imdb = $dba->[$z][0][2];
     my $resimdb = LWP::UserAgent->new->get($d[0][4][0].$imdb.$d[0][4][7], 'User-Agent' => $UA);
-    ($text) = _mine($resimdb, $d[0][4][13]);    
-    my ($adr, $pers) = _mine($resimdb, $d[0][4][8]);
-    my $first = $dba->[$numb][8][0][2];
-    my @roles;
-    for (@$text) {
-        if ($_ =~ m{<a.*?>(.*?)</a>}mg) {
-            push @roles, $1
-        }
-        else {
-            push @roles, $_
-        }
-    }
-    my @pers = @$pers;
-    my (@actors, $flag);
-    for (@pers) {
-        if ($_ eq $first && $flag != 1) {
-           push @actors, $_;
-           $flag = 1;
-        }
-        elsif ($flag == 1) {
-            push @actors, $_;
-        }
-    }
+    my ($rols) = _mine($resimdb, $d[0][4][12], $d[0][4][13]);    
+    my ($pers) = _mine($resimdb, $d[0][4][12], $d[0][4][14]);
     for my $x (0..13) {
-        for my $y (0..$#roles) {
-            if (length($dba->[$numb][8][$x][0]) > 0) {
-                if ($dba->[$numb][8][$x][2] eq $actors[$y]) {
-                   $dba->[$numb][8][$x][3] = $roles[$y];
+        for my $y (0..@$rols) {
+            if (length($dba->[$z][8][$x][0]) > 0) {
+                if ($dba->[$z][8][$x][2] eq $pers->[$y]) {
+                    $dba->[$z][8][$x][3] = $rols->[$y];
                 }
             }
         }        
     }
-    DumpFile($base.$bnumb, $dba);
 
-    my $dba2 = LoadFile('/home/marat/Base/b/9');
     my $next = $#{$dba2} + 1;
-    my $z = $numb;
     for my $x (0..6) {
         for my $y (0..6) {
             if (exists $dba->[$z][$x][$y]) {
@@ -243,20 +234,17 @@ sub roles {
     }
     $dba2->[$next][13][0] = $dba->[$z][13][0];
     $dba2->[$next][13][1] = $dba->[$z][13][1];
-    my @film = @$dba2;
-    @film = sort {                                                      # SORT BY YEAR AND REIT
-        $a->[3][0] cmp $b->[3][0]
-        ||
-        $b->[2][0] cmp $a->[2][0]
-    } @film;
-    $dba2 = [@film];
-    DumpFile('/home/marat/Base/b/9', $dba2);
+    $dba->[$z] = $dba2->[$next];
 }
+    DumpFile('/home/marat/Base/b/10', $dba2);
+    DumpFile($base.$bnumb, $dba);
+}
+
 =encoding utf8
 =head1 AUTHOR
-Marat Haakimoff
+Marat Hakimov
 =head1 LICENSE
-This library is free software. You can redistribute it and/or modify
+This library is not free software. You cannot redistribute it and/or modify
 it under the same terms as Perl itself.
 =cut
 __PACKAGE__->meta->make_immutable;
