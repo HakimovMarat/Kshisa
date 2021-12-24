@@ -1,33 +1,58 @@
 body{
-    background: url(/images/0/scene.jpg);
+    background: url(/images/0/scene.jpg) no-repeat;
+}
+hr {
+    width: 100%;
+    margin: 3px;
+}
+.find {
+    width: 130px;
+    margin-left: 50px;
+    margin-bottom: 5px;
+}
+.cite {
+    margin-left: 95px;
 }
 .Logo {
+    float: left;
     height: 30px;
     width: 102px;
-    margin: 15px 8px 3px 0px;
-    border: 1px solid black;
+    margin: 0 3px 3px 5px;
+    border: 1px solid #d6e900;;
     background: #819abb;
+    margin-top: 1%;
 }
 #logo {
     float: left;
     width: 100px;
 }
+#Gorisond {
+    float: left;
+    margin: 6px 8px 3px 27%;
+}
 #addr{
-    width:  10%;
+    width:  9%;
     height: 43px;
-    margin: 10px 1px 1px 15px;
+    margin: 10px 1px 1px 4px;
+    font-size: 77%;
 }
 #address {
+    float: left;
     margin: 10px 1px 7px 1px;
     padding: 1px 1px 1px 10px;
-    font-size: 1.4em;
-    width: 47%;
+    font-size: 1.6em;
+    width: 55%;
 }
 #search {
+    float: left;
     margin: 10px 5px 1px 1px;
+    width: 94%;
+}
+#nav {
+    float: left;
 }
 #user{
-    background: url(/images/0/back2.png) no-repeat;
+    background: url(/images/0/back.png) no-repeat;
     background-position: 100%;
     padding-top: 10px;
     height: 700px;
@@ -39,10 +64,8 @@ body{
     top: 20px;
 }
 #dash{ 
-    background: url(/images/0/TV.png) no-repeat;
     position: relative; 
-    top: 254px;
-    left: 14px;
+    top: 40%;
     width: 530px;
     height: 350px;
 }
@@ -56,37 +79,35 @@ label {
 }
 .numb{
     text-align: center;
-    font-size: 25px;
+    font-size: 20px;
     padding: 5px 10px;
-    border-radius: 5px;
     vertical-align: middle;
-    border: 1px solid #d6e900;
+    margin-bottom: 6px;
 }
 #tit{
     float: left;
-    width: 52%;
+    width: 80%;
     font-size: 40px;
     text-align: center;
 }
-#Clock { 
+#Clock {
+    float: left;
     height: 50px;
-    width: 9%;
-    margin: 4px 1px 1px 1px;
-    border: 1px solid #d6e900;;
-    padding: 1px 1px 1px 6px;
+    margin: 7px 8px 1px 1px;
+    border: 3px solid;
+    padding-left: 1%;
+    padding-right: 1%;
     border-radius: 5px;
 }
 #Date { 
-    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+    font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif;
     font-size: 12px;
-    margin: 0 21%;
-    text-shadow: 0 0 5px gray; 
-    float: left;
+    text-shadow: 0 0 5px grey;
+    text-align: center;
 }
 #timer { 
     font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
     text-shadow: 0 0 5px gray; 
-    margin: 0 14%;
 }
 #hours { 
     font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; 
@@ -107,7 +128,7 @@ label {
     float: left;
 }
 #weather {
-    margin: 5px 1px 1px 1px;
+    float: left;
 }
 #tot{
     font-size: 20px;
@@ -122,17 +143,22 @@ label {
 }
 .label1 {
     float: left;
-    width: 30%;
-    font-size: 15px;
+    width: 45%;
+    font-size: 12px;
 }
 .label2 {
     float: left;
     width: 70%;
 }
+.label3 {
+    float: left;
+    width: 30%;
+    font-size: 12px;
+}
 #rating {
     float: left;
-    width: 23%;
-    padding-left: 10px;
+    width: 32%;
+    padding-left: 16px;
 }
 #dime {
     color: white;
@@ -140,24 +166,25 @@ label {
     margin-bottom: 6px;
 }
 #pers {
-    margin-top: 101%;
+    margin-top: 10%;
 }
 .port {
-    width: 69px;
+    width: 18%;
     margin-left: 10px;
 }
 .post {
     margin: 0 10px;
+    float: left;
 }
 #pics {
     width: 100%;
 }
 #imgs {
     float: left;
-    width: 743px;
+    width: 100%;
     height: 300px;
-    background: url(/images/0/TV01.png) no-repeat;
-    background-size: 74% 100%;
+    background: url(/images/0/TV02.png) no-repeat;
+    background-size: 100% 100%;
 }
 #shot {
     float: left;
@@ -169,19 +196,18 @@ label {
 .bill {
     float: left;
     margin: 5px;
-    width: 20%;
-    height: 40%;
+    width: 26%;
+    height: 49%;
 }
 #title1 {
     text-align: center;
-    color: white;
     margin: auto;
     float: left;
     width: 100%;
 }
 #title2 {
     text-align: center;
-    color: #19b5c4;
+    color: white;
     margin: auto;
     float: left;
     width: 100%;
@@ -190,8 +216,8 @@ label {
 #images {
     width: 10%;
 }
-#img {
-    margin-right: 20%;
+.img {
+    margin-right: 10%;
 }
 #imgsk {
     float: left;
@@ -207,8 +233,8 @@ label {
     margin: 18px;
 }
 #post{
-    padding-left: 6px;
-    margin-top: 14px;
+    padding: 6px 37px 0 10px;
+    margin-top: 10px;
 }
 .kadr{
     margin: 2px;
@@ -231,9 +257,6 @@ label {
     text-align: center;
     margin-left: 8px;
 }
-hr {
-    margin-bottom: 10px;
-}
 select {
     width: 276px;
     height: 21px;
@@ -254,7 +277,8 @@ a.tip:hover span {
     margin: 8px;
     width: 200px;
     position: absolute;
-    text-decoration: none
+    text-decoration: none;
+    margin-top: 50px;
 }
 #reit {
     width: 10%;
@@ -263,28 +287,26 @@ a.tip:hover span {
 #imdb {
     float: left;
     width: 94%;
-    margin-left: 3%;
+    margin: 17px 0;
 }
 .chek {
     zoom: 2;
-    position: relative;
-    top: 18px;
 }
 .chekit {
     zoom: 2;
     position: relative;
-    left: -36px;
-    top: -15px;
+    left: -62px;
+    top: -34px;
 }
 .dims {
-    width: 350px;
+    width: 360px;
     float: left;
     margin-left: 4px;
     height: 280px;
 }
 .del{
-    float: left;
-    margin: 10px;
+    margin: 1px;
+    width: 46%;
 }
 #inst{
     float: left;
